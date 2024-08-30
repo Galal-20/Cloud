@@ -58,7 +58,6 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_map)
 
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
@@ -67,11 +66,9 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
-        // Retrieve the latitude and longitude passed from MainActivity
         val latitude = intent.getDoubleExtra("latitude", 0.0)
         val longitude = intent.getDoubleExtra("longitude", 0.0)
 
-        // Add a marker at the specified location and move the camera
         val location = LatLng(latitude, longitude)
         mMap.addMarker(MarkerOptions().position(location).title("Marker at Location"))
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 15f)) // Zoom level can be adjusted
