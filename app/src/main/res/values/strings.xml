@@ -1,3 +1,27 @@
 <resources>
     <string name="app_name">Cloud</string>
+    <string name="hope_you_a_nice_weather">Hope you a nice weather</string>
+    <string name="cairo_egypt">Cairo, Egypt</string>
+    <string name="today">Today</string>
+    <string name="temp">00:00 °C</string>
+    <string name="sunny">Sunny</string>
+    <string name="date">29 July 2023</string>
+    <string name="day">Sunday</string>
+    <string name="mini">Mini: 00:00 °C</string>
+    <string name="max">Max: 00:00 °C</string>
+
+    <string name="sunset">Sunset</string>
+    <string name="_00_00">00:00</string>
+    <string name="sunrise">Sunrise</string>
+    <string name="wind">Wind Speed</string>
+    <string name="ooms">00:00 m/s</string>
+    <string name="condition">Condition</string>
+    <string name="sea">Sea</string>
+    <string name="_0000_hpa">0000 hpa</string>
+    <string name="humidity">Humidity</string>
+    <string name="_00">00 %</string>
+    <string name="maxT">Max</string>
+    <string name="miniT">Mini</string>
+    <string name="time">00:00 AM</string>
+
 </resources>

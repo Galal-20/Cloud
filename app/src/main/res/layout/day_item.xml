@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="100dp"
+    android:layout_height="140dp"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="30dp"
+    app:cardElevation="15dp"
+
+    >
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+
+        >
+
+        <TextView
+            android:id="@+id/day_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:layout_margin="10dp"
+            android:fontFamily="@font/merriweathersans_bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Tomorrow" />
+
+
+        <ImageView
+            android:id="@+id/day_weather_image_view"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/baseline_cloud_queue_24"
+            app:layout_constraintStart_toStartOf="@id/day_text_view"
+            app:layout_constraintTop_toBottomOf="@id/day_text_view"
+            />
+
+
+
+        <TextView
+            android:id="@+id/day_weather_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="@id/day_weather_image_view"
+            app:layout_constraintEnd_toEndOf="@+id/day_text_view"
+            app:layout_constraintTop_toTopOf="@id/day_weather_image_view"
+            tools:text="Clear" />
+
+
+        <TextView
+            android:id="@+id/day_max_degree"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:layout_marginTop="10dp"
+            app:layout_constraintStart_toStartOf="@id/day_weather_image_view"
+            app:layout_constraintTop_toBottomOf="@id/day_weather_image_view"
+            tools:text="35" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textMax"
+            app:layout_constraintStart_toStartOf="@id/day_max_degree"
+            app:layout_constraintTop_toBottomOf="@id/day_max_degree"
+            app:layout_constraintEnd_toEndOf="@id/day_max_degree"
+            android:text="@string/maxT"
+            android:textSize="14sp"
+            />
+
+        <TextView
+            android:id="@+id/day_min_degree"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            app:layout_constraintTop_toTopOf="@id/day_max_degree"
+            app:layout_constraintBottom_toBottomOf="@+id/day_max_degree"
+            app:layout_constraintEnd_toEndOf="@id/day_weather_description"
+            tools:text="20" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textMini"
+            app:layout_constraintStart_toStartOf="@id/day_min_degree"
+            app:layout_constraintTop_toBottomOf="@id/day_min_degree"
+            app:layout_constraintEnd_toEndOf="@id/day_min_degree"
+            android:text="@string/miniT"
+            android:textSize="14sp"
+            />
+
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>
