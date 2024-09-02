@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="100dp"
-    android:layout_height="140dp"
+    android:layout_width="180dp"
+    android:layout_height="150dp"
     android:layout_margin="8dp"
-    app:cardCornerRadius="30dp"
+    app:cardCornerRadius="20dp"
+    android:background="@drawable/backgroundshapeweather"
     app:cardElevation="15dp"
 
     >
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
 
         >
@@ -20,8 +22,9 @@
             android:id="@+id/day_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:layout_margin="10dp"
+            android:textSize="18sp"
+            android:layout_marginTop="5dp"
+            android:textColor="@color/black"
             android:fontFamily="@font/merriweathersans_bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -31,23 +34,25 @@
 
         <ImageView
             android:id="@+id/day_weather_image_view"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginTop="10dp"
+            android:layout_width="70dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="10dp"
             android:src="@drawable/baseline_cloud_queue_24"
-            app:layout_constraintStart_toStartOf="@id/day_text_view"
-            app:layout_constraintTop_toBottomOf="@id/day_text_view"
-            />
-
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/day_text_view" />
 
 
         <TextView
             android:id="@+id/day_weather_description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:textColor="@color/black"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="@id/day_weather_image_view"
-            app:layout_constraintEnd_toEndOf="@+id/day_text_view"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/day_weather_image_view"
             app:layout_constraintTop_toTopOf="@id/day_weather_image_view"
             tools:text="Clear" />
 
@@ -56,47 +61,53 @@
             android:id="@+id/day_max_degree"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:textColor="@color/black"
             android:textSize="16sp"
-            android:layout_marginTop="10dp"
+            app:layout_constraintEnd_toEndOf="@+id/day_weather_image_view"
             app:layout_constraintStart_toStartOf="@id/day_weather_image_view"
             app:layout_constraintTop_toBottomOf="@id/day_weather_image_view"
             tools:text="35" />
 
         <TextView
+            android:id="@+id/textMax"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/textMax"
-            app:layout_constraintStart_toStartOf="@id/day_max_degree"
-            app:layout_constraintTop_toBottomOf="@id/day_max_degree"
-            app:layout_constraintEnd_toEndOf="@id/day_max_degree"
             android:text="@string/maxT"
             android:textSize="14sp"
-            />
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/day_max_degree"
+            app:layout_constraintStart_toStartOf="@id/day_max_degree"
+            app:layout_constraintTop_toBottomOf="@id/day_max_degree" />
 
         <TextView
             android:id="@+id/day_min_degree"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/black"
             android:textSize="16sp"
-            app:layout_constraintTop_toTopOf="@id/day_max_degree"
             app:layout_constraintBottom_toBottomOf="@+id/day_max_degree"
             app:layout_constraintEnd_toEndOf="@id/day_weather_description"
+            app:layout_constraintStart_toStartOf="@+id/day_weather_description"
+            app:layout_constraintTop_toTopOf="@id/day_max_degree"
             tools:text="20" />
 
         <TextView
+            android:id="@+id/textMini"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/textMini"
-            app:layout_constraintStart_toStartOf="@id/day_min_degree"
-            app:layout_constraintTop_toBottomOf="@id/day_min_degree"
-            app:layout_constraintEnd_toEndOf="@id/day_min_degree"
             android:text="@string/miniT"
             android:textSize="14sp"
-            />
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/day_min_degree"
+            app:layout_constraintStart_toStartOf="@id/day_min_degree"
+            app:layout_constraintTop_toBottomOf="@id/day_min_degree" />
 
 
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-</androidx.cardview.widget.CardView>
+</FrameLayout>

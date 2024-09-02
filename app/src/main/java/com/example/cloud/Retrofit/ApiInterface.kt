@@ -1,6 +1,7 @@
 package com.galal.weather.Retrofit
 
-import com.galal.weather.Model.weatherApp
+import com.example.cloud.model.Daily
+import com.example.cloud.model.HourlyForecastResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -11,15 +12,35 @@ interface ApiInterface {
         @Query("q") city: String,
         @Query("appId") appId: String,
         @Query("units") units: String
-    ): Response<weatherApp>
+    ): Response<Daily>
+
+    @GET("forecast")
+    suspend fun getHourlyForecast(
+        @Query("q") city: String,
+        @Query("appId") appId: String,
+        @Query("units") units: String
+    ): Response<HourlyForecastResponse>
 
 
-   /* @GET("onecall")
-    suspend fun getHourlyWeather(
-        @Query("lat") latitude: Double,
-        @Query("lon") longitude: Double,
-        @Query("appid") apiKey: String,
-        @Query("units") units: String,
-        @Query("exclude") exclude: String = "current,minutely,daily,alerts"
-    ): Response<HourlyWeatherResponse>*/
+
+
+    @GET("forecast/daily")
+    suspend fun getDailyForecast(
+        @Query("q") city: String,
+        @Query("cnt") count: Int,
+        @Query("appid") appid: String,
+        @Query("units") units: String
+    ): Response<Daily>
+
+
+
+
 }
+
+
+
+
+
+
+
+

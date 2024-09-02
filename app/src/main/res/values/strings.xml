@@ -7,8 +7,8 @@
     <string name="sunny">Sunny</string>
     <string name="date">29 July 2023</string>
     <string name="day">Sunday</string>
-    <string name="mini">Mini: 00:00 °C</string>
-    <string name="max">Max: 00:00 °C</string>
+    <string name="mini">00:00/</string>
+    <string name="max">00:00°C</string>
 
     <string name="sunset">Sunset</string>
     <string name="_00_00">00:00</string>
