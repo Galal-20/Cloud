@@ -11,6 +11,17 @@
     tools:context=".Ui.Main.MainActivity">
 
 
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/loading"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
+
+
     <ImageView
         android:layout_width="30dp"
         android:layout_height="30dp"
@@ -20,8 +31,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginEnd="10dp"
-        android:layout_marginTop="40dp"
-        android:onClick="Notification"
+        android:layout_marginTop="30dp"
+        android:onClick="notification"
         />
 
     <TextView
@@ -53,8 +64,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="40dp"
-        android:onClick="Favourites"
+        android:layout_marginTop="30dp"
+        android:onClick="favourites"
         />
 
 
@@ -163,7 +174,7 @@
         android:id="@+id/hours_recycler_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:orientation="horizontal"
@@ -176,7 +187,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="horizontal"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -186,16 +197,17 @@
         />
     <FrameLayout
         android:layout_width="0dp"
-        android:layout_height="250dp"
+        android:layout_height="200dp"
         android:id="@+id/fram"
         android:layout_marginStart="16dp"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="100dp"
         android:background="@drawable/backgroundshapeweather"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/day_recycler_view"
+
         >
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -411,6 +423,21 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </FrameLayout>
+
+    <ImageView
+        android:id="@+id/settings"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:contentDescription="TODO"
+        android:onClick="settings"
+        android:src="@drawable/ic_settings"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/fram"
+        app:layout_constraintStart_toStartOf="@+id/fram"
+        app:layout_constraintTop_toBottomOf="@id/fram" />
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

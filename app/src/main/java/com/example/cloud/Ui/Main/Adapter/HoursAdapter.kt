@@ -7,15 +7,16 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.cloud.databinding.HoursItemBinding
-import com.example.cloud.model.HourlyWeather
+import com.example.cloud.model.HourlyListElement
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class HoursAdapter : ListAdapter<HourlyWeather, HoursAdapter.HourlyWeatherViewHolder>(HourlyWeatherDiffCallback()) {
+class HoursAdapter : ListAdapter<HourlyListElement, HoursAdapter.HourlyWeatherViewHolder>
+    (HourlyWeatherDiffCallback()) {
 
     inner class HourlyWeatherViewHolder(private val binding: HoursItemBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(hourlyWeather: HourlyWeather) {
+        fun bind(hourlyWeather: HourlyListElement) {
             binding.timeTextView.text = formatTime(hourlyWeather.dt)
             binding.hoursDegree.text = "${hourlyWeather.main.temp}°C"
 
@@ -41,12 +42,12 @@ class HoursAdapter : ListAdapter<HourlyWeather, HoursAdapter.HourlyWeatherViewHo
         holder.bind(getItem(position))
     }
 
-    class HourlyWeatherDiffCallback : DiffUtil.ItemCallback<HourlyWeather>() {
-        override fun areItemsTheSame(oldItem: HourlyWeather, newItem: HourlyWeather): Boolean {
+    class HourlyWeatherDiffCallback : DiffUtil.ItemCallback<HourlyListElement>() {
+        override fun areItemsTheSame(oldItem: HourlyListElement, newItem: HourlyListElement): Boolean {
             return oldItem.dt == newItem.dt
         }
 
-        override fun areContentsTheSame(oldItem: HourlyWeather, newItem: HourlyWeather): Boolean {
+        override fun areContentsTheSame(oldItem: HourlyListElement, newItem: HourlyListElement): Boolean {
             return oldItem == newItem
         }
     }

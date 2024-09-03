@@ -37,12 +37,6 @@ data class Coord (
 )
 
 data class ListElement (
-    /*val dt: Long,
-    val temp: Tempe,
-    val weather: List<Weather>,
-    val humidity: Long,
-    val pressure: Long,
-    val wind: Wind*/
 
     val rain: Double? = null,
     val sunrise: Long,

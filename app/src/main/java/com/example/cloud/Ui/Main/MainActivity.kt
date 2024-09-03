@@ -1,7 +1,9 @@
 package com.example.cloud.Ui.Main
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.location.Geocoder
 import android.location.Location
 import android.os.Bundle
@@ -11,15 +13,16 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.cloud.R
 import com.example.cloud.Ui.Main.Adapter.DaysAdapter
 import com.example.cloud.Ui.Main.Adapter.HoursAdapter
 import com.example.cloud.Ui.Map.MapActivity
+import com.example.cloud.Ui.Notification.NotificationActivity
+import com.example.cloud.Utils.SettingsBottomSheetDialog
 import com.example.cloud.databinding.ActivityMainBinding
 import com.example.cloud.model.Daily
-import com.example.cloud.model.HourlyWeather
+import com.example.cloud.model.HourlyListElement
 import com.example.cloud.model.ListElement
 import com.example.cloud.repository.WeatherRepository
 import com.galal.weather.ViewModel.WeatherViewModel
@@ -30,13 +33,13 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+@Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity(), AirLocation.Callback {
     private val binding:ActivityMainBinding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
     private lateinit var airLocation: AirLocation
-
-
+    private lateinit var sharedPreferences: SharedPreferences
     private var city: String =""
     private var lat: Double = 0.0
     private var lon: Double = 0.0
@@ -45,19 +48,37 @@ class MainActivity : AppCompatActivity(), AirLocation.Callback {
         WeatherViewModelFactory(WeatherRepository())
     }
     private var dataFetched = false
+    private lateinit var loadingIndicator: View
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(binding.root)
+        loadingIndicator = binding.loading
+        getLocation()
+
         setupObservers()
+        sharedPreferences = getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
+        val language = sharedPreferences.getString("language", "en")
+        setLocale(language)
+    }
+
+    private fun setLocale(languageCode: String?) {
+        if (languageCode != null) {
+            val locale = Locale(languageCode)
+            Locale.setDefault(locale)
+            val config = resources.configuration
+            config.setLocale(locale)
+            resources.updateConfiguration(config, resources.displayMetrics)
+        }
     }
 
     private fun setupObservers() {
-        getLocation()
+        loadingIndicator.visibility = View.VISIBLE
 
-        weatherViewModel.weatherData.observe(this, Observer { result ->
+        weatherViewModel.weatherData.observe(this) { result ->
+            loadingIndicator.visibility = View.GONE
             result.fold(
                 onSuccess = { data ->
                     updateUI(data)
@@ -66,9 +87,10 @@ class MainActivity : AppCompatActivity(), AirLocation.Callback {
                     Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
                 }
             )
-        })
+        }
 
-        weatherViewModel.hourlyForecastData.observe(this, Observer { result ->
+        weatherViewModel.hourlyForecastData.observe(this) { result ->
+            loadingIndicator.visibility = View.GONE
             result.fold(
                 onSuccess = { hourlyForecastResponse ->
                     setupHourlyForecastRecyclerView(hourlyForecastResponse.list)
@@ -77,9 +99,12 @@ class MainActivity : AppCompatActivity(), AirLocation.Callback {
                     Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
                 }
             )
-        })
+        }
 
-        weatherViewModel.dailyForecastData.observe(this, Observer { result ->
+
+
+        weatherViewModel.dailyForecastData.observe(this) { result ->
+            loadingIndicator.visibility = View.GONE
             result.fold(
                 onSuccess = { dailyForecastResponse ->
                     setupDailyForecastRecyclerView(dailyForecastResponse.list)
@@ -88,18 +113,18 @@ class MainActivity : AppCompatActivity(), AirLocation.Callback {
                     Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
                 }
             )
-        })
-
+        }
 
     }
 
 
-    private fun setupHourlyForecastRecyclerView(hourlyForecastList: List<HourlyWeather>) {
+    private fun setupHourlyForecastRecyclerView(hourlyForecastList: List<HourlyListElement>) {
         val adapter = binding.hoursRecyclerView.adapter as? HoursAdapter ?: HoursAdapter()
         binding.hoursRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         binding.hoursRecyclerView.adapter = adapter
         adapter.submitList(hourlyForecastList)
     }
+
     private fun setupDailyForecastRecyclerView(dailyForecastList: List<ListElement>) {
         Log.d("MainActivity", "Daily Forecast List: $dailyForecastList")
         val adapter = binding.dayRecyclerView.adapter as? DaysAdapter ?: DaysAdapter()
@@ -114,10 +139,10 @@ class MainActivity : AppCompatActivity(), AirLocation.Callback {
         binding.maxTemp.text = "${weather.main.temp_max}°C"
         binding.miniTemp.text = "${weather.main.temp_min}° / "
         binding.humidity.text = "${weather.main.humidity} %"
-        binding.windSpeed.text = "${weather.wind.speed} m/s"
+        binding.windSpeed.text = "${weather.wind.speed}m/s"
         binding.sunrisee.text = time(weather.sys.sunrise.toLong())
         binding.sunset.text = time(weather.sys.sunset.toLong())
-        binding.sea.text = "${weather.main.pressure} hpa"
+        binding.sea.text = "${weather.main.pressure}hpa"
 
         val weatherCondition = weather.weather.firstOrNull()
         binding.condition.text = weatherCondition?.main ?: "Unknown"
@@ -170,7 +195,7 @@ class MainActivity : AppCompatActivity(), AirLocation.Callback {
         return simpleDateFormat.format(Date(timesTemp * 1000))
     }
 
-    fun dayName(): String {
+    private fun dayName(): String {
         val simpleDateFormat = SimpleDateFormat("EEEE", Locale.getDefault())
         return simpleDateFormat.format(Date())
     }
@@ -205,6 +230,7 @@ class MainActivity : AppCompatActivity(), AirLocation.Callback {
     }
 
 
+    @Deprecated("Deprecated")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         airLocation.onActivityResult(requestCode, resultCode, data)
@@ -216,15 +242,88 @@ class MainActivity : AppCompatActivity(), AirLocation.Callback {
 
     //**********************************************************************************************
 
-    fun Notification(view: View) {}
-    fun Favourites(view: View) {}
+    fun notification(view: View) {
+        startActivity(Intent(this, NotificationActivity::class.java))
+    }
+    fun favourites(view: View) {}
     fun openLocation(view: View) {
         val intent = Intent(this, MapActivity::class.java)
         intent.putExtra("latitude", lat)
         intent.putExtra("longitude", lon)
         startActivity(intent)
     }
+
+    fun settings(view: View) {
+        val settingsBottomSheet = SettingsBottomSheetDialog()
+        settingsBottomSheet.show(supportFragmentManager, "SettingsBottomSheetDialog")
+    }
+    //**********************************************************************************************
 }
+
+
+
+
+/* private fun scheduleWeatherNotifications() {
+       val workManager = WorkManager.getInstance(this)
+
+       // Morning notification at 8:00 AM
+       val morningRequest = createWorkRequest("08:00")
+       workManager.enqueueUniquePeriodicWork(
+           "MorningWeatherNotification",
+           ExistingPeriodicWorkPolicy.REPLACE,
+           morningRequest
+       )
+
+       // Evening notification at 7:00 PM
+       val eveningRequest = createWorkRequest("19:00")
+       workManager.enqueueUniquePeriodicWork(
+           "EveningWeatherNotification",
+           ExistingPeriodicWorkPolicy.REPLACE,
+           eveningRequest
+       )
+
+       // Night notification at 10:00 PM
+       val nightRequest = createWorkRequest("23:21")
+       workManager.enqueueUniquePeriodicWork(
+           "NightWeatherNotification",
+           ExistingPeriodicWorkPolicy.REPLACE,
+           nightRequest
+       )
+
+       val nightRequestt = createWorkRequest("23:32")
+       workManager.enqueueUniquePeriodicWork(
+           "NightWeatherNotification",
+           ExistingPeriodicWorkPolicy.REPLACE,
+           nightRequestt
+       )
+   }
+
+   private fun createWorkRequest(time: String): PeriodicWorkRequest {
+       val dailyConstraints = Constraints.Builder()
+           .setRequiresBatteryNotLow(true)
+           .setRequiredNetworkType(NetworkType.CONNECTED)
+           .build()
+
+       return PeriodicWorkRequestBuilder<WeatherNotificationWorker>(1, TimeUnit.DAYS)
+           .setConstraints(dailyConstraints)
+           .setInitialDelay(calculateInitialDelay(time), TimeUnit.MILLISECONDS)
+           .build()
+   }
+
+   private fun calculateInitialDelay(time: String): Long {
+       val currentTime = Calendar.getInstance()
+       val targetTime = Calendar.getInstance()
+
+       val (hour, minute) = time.split(":").map { it.toInt() }
+       targetTime.set(Calendar.HOUR_OF_DAY, hour)
+       targetTime.set(Calendar.MINUTE, minute)
+
+       if (targetTime.before(currentTime)) {
+           targetTime.add(Calendar.DAY_OF_MONTH, 1)
+       }
+
+       return targetTime.timeInMillis - currentTime.timeInMillis
+   }*/
 
 
 

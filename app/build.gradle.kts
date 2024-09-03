@@ -108,6 +108,8 @@ dependencies {
 
     implementation("androidx.activity:activity-ktx:1.7.2") // Use the latest version available
 
+    implementation("androidx.work:work-runtime-ktx:2.8.1")
+
 
 
 
