@@ -1,5 +1,6 @@
 package com.example.cloud.Ui.Main.Adapter
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -36,6 +37,9 @@ class DaysAdapter : ListAdapter<ListElement, DaysAdapter.DayViewHolder>(DiffCall
         private val minDegreeTextView: TextView = itemView.findViewById(R.id.day_min_degree)
 
         fun bind(dailyData: ListElement) {
+            val unit = itemView.context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
+                .getString("temperature_unit", "Celsius") ?: "Celsius"
+
             val dateFormat = SimpleDateFormat("EEEE", Locale.getDefault())
             val date = Date(dailyData.dt * 1000)
             dayTextView.text = dateFormat.format(date)
@@ -50,9 +54,29 @@ class DaysAdapter : ListAdapter<ListElement, DaysAdapter.DayViewHolder>(DiffCall
                 .error(R.drawable.wind)
                 .into(weatherImageView)
 
-            maxDegreeTextView.text = "${dailyData.temp.max}°C"
-            minDegreeTextView.text = "${dailyData.temp.min}°C"
+            val maxTemp = convertTemperature(dailyData.temp.max, unit)
+            val minTemp = convertTemperature(dailyData.temp.min, unit)
+
+
+            maxDegreeTextView.text = String.format("%.1f°%s", maxTemp, getUnitSymbol(unit))
+            minDegreeTextView.text = String.format("%.1f°%s", minTemp, getUnitSymbol(unit))
         }
+
+        fun convertTemperature(tempCelsius: Double, unit: String): Double {
+            return when (unit) {
+                "Fahrenheit" -> tempCelsius * 9/5 + 32
+                "Kelvin" -> tempCelsius + 273.15
+                else -> tempCelsius
+            }
+        }
+        private fun getUnitSymbol(unit: String): String {
+            return when (unit) {
+                "Fahrenheit" -> "F"
+                "Kelvin" -> "K"
+                else -> "C"
+            }
+        }
+
     }
 
     class DiffCallback : DiffUtil.ItemCallback<ListElement>() {

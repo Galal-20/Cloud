@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.cloud.Utils.WeatherUtils
 import com.example.cloud.model.Daily
 import com.example.cloud.model.Hourly
 import com.example.cloud.repository.WeatherRepository

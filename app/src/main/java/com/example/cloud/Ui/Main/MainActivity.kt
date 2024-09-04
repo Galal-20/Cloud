@@ -19,7 +19,7 @@ import com.example.cloud.Ui.Main.Adapter.DaysAdapter
 import com.example.cloud.Ui.Main.Adapter.HoursAdapter
 import com.example.cloud.Ui.Map.MapActivity
 import com.example.cloud.Ui.Notification.NotificationActivity
-import com.example.cloud.Utils.SettingsBottomSheetDialog
+import com.example.cloud.Ui.Settings.SettingsBottomSheetDialog
 import com.example.cloud.databinding.ActivityMainBinding
 import com.example.cloud.model.Daily
 import com.example.cloud.model.HourlyListElement
@@ -135,11 +135,21 @@ class MainActivity : AppCompatActivity(), AirLocation.Callback {
     }
 
     private fun updateUI(weather: Daily) {
-        binding.temp.text = "${weather.main.temp}°C"
-        binding.maxTemp.text = "${weather.main.temp_max}°C"
-        binding.miniTemp.text = "${weather.main.temp_min}° / "
+        val unit = sharedPreferences.getString("temperature_unit", "Celsius") ?: "Celsius"
+        val windSpeedUnit = sharedPreferences.getString("wind_speed_unit", "Meter/Second") ?: "Meter/Second"
+
+
+        val currentTemp = convertTemperature(weather.main.temp, unit)
+        val maxTemp = convertTemperature(weather.main.temp_max, unit)
+        val minTemp = convertTemperature(weather.main.temp_min, unit)
+        val windSpeed = convertWindSpeed(weather.wind.speed, "Meter/Second", windSpeedUnit)
+
+
+        binding.temp.text = String.format("%.1f°%s", currentTemp, getUnitSymbol(unit))
+        binding.maxTemp.text = String.format("%.1f°%s", maxTemp, getUnitSymbol(unit))
+        binding.miniTemp.text = String.format("%.1f°%s/", minTemp, getUnitSymbol(unit))
         binding.humidity.text = "${weather.main.humidity} %"
-        binding.windSpeed.text = "${weather.wind.speed}m/s"
+        binding.windSpeed.text = String.format(Locale.getDefault(), "%.1f %s", windSpeed, getWindSpeedUnitSymbol(windSpeedUnit))
         binding.sunrisee.text = time(weather.sys.sunrise.toLong())
         binding.sunset.text = time(weather.sys.sunset.toLong())
         binding.sea.text = "${weather.main.pressure}hpa"
@@ -154,6 +164,23 @@ class MainActivity : AppCompatActivity(), AirLocation.Callback {
 
         runOnUiThread {
             changeImageWeather(weatherCondition?.main ?: "unknown")
+        }
+    }
+
+    private fun getUnitSymbol(unit: String): String {
+        return when (unit) {
+            "Celsius" -> "C"
+            "Fahrenheit" -> "F"
+            "Kelvin" -> "K"
+            else -> "C"
+        }
+    }
+
+    private fun getWindSpeedUnitSymbol(unit: String): String {
+        return when (unit) {
+            "Meter/Second" -> "m/s"
+            "Miles/Hour" -> "mph"
+            else -> "m/s"
         }
     }
 
@@ -257,80 +284,26 @@ class MainActivity : AppCompatActivity(), AirLocation.Callback {
         val settingsBottomSheet = SettingsBottomSheetDialog()
         settingsBottomSheet.show(supportFragmentManager, "SettingsBottomSheetDialog")
     }
+
+    private fun convertTemperature(tempInCelsius: Double, unit: String): Double {
+        return when (unit) {
+            "Celsius" -> tempInCelsius
+            "Fahrenheit" -> (tempInCelsius * 9/5) + 32
+            "Kelvin" -> tempInCelsius + 273.15
+            else -> tempInCelsius
+        }
+    }
+
+    fun convertWindSpeed(speed: Double, fromUnit: String, toUnit: String): Double {
+        return when (toUnit) {
+            "Miles/Hour" -> if (fromUnit == "Meter/Second") speed * 2.23694 else speed
+            "Meter/Second" -> if (fromUnit == "Miles/Hour") speed / 2.23694 else speed
+            else -> speed
+        }
+    }
+
     //**********************************************************************************************
 }
-
-
-
-
-/* private fun scheduleWeatherNotifications() {
-       val workManager = WorkManager.getInstance(this)
-
-       // Morning notification at 8:00 AM
-       val morningRequest = createWorkRequest("08:00")
-       workManager.enqueueUniquePeriodicWork(
-           "MorningWeatherNotification",
-           ExistingPeriodicWorkPolicy.REPLACE,
-           morningRequest
-       )
-
-       // Evening notification at 7:00 PM
-       val eveningRequest = createWorkRequest("19:00")
-       workManager.enqueueUniquePeriodicWork(
-           "EveningWeatherNotification",
-           ExistingPeriodicWorkPolicy.REPLACE,
-           eveningRequest
-       )
-
-       // Night notification at 10:00 PM
-       val nightRequest = createWorkRequest("23:21")
-       workManager.enqueueUniquePeriodicWork(
-           "NightWeatherNotification",
-           ExistingPeriodicWorkPolicy.REPLACE,
-           nightRequest
-       )
-
-       val nightRequestt = createWorkRequest("23:32")
-       workManager.enqueueUniquePeriodicWork(
-           "NightWeatherNotification",
-           ExistingPeriodicWorkPolicy.REPLACE,
-           nightRequestt
-       )
-   }
-
-   private fun createWorkRequest(time: String): PeriodicWorkRequest {
-       val dailyConstraints = Constraints.Builder()
-           .setRequiresBatteryNotLow(true)
-           .setRequiredNetworkType(NetworkType.CONNECTED)
-           .build()
-
-       return PeriodicWorkRequestBuilder<WeatherNotificationWorker>(1, TimeUnit.DAYS)
-           .setConstraints(dailyConstraints)
-           .setInitialDelay(calculateInitialDelay(time), TimeUnit.MILLISECONDS)
-           .build()
-   }
-
-   private fun calculateInitialDelay(time: String): Long {
-       val currentTime = Calendar.getInstance()
-       val targetTime = Calendar.getInstance()
-
-       val (hour, minute) = time.split(":").map { it.toInt() }
-       targetTime.set(Calendar.HOUR_OF_DAY, hour)
-       targetTime.set(Calendar.MINUTE, minute)
-
-       if (targetTime.before(currentTime)) {
-           targetTime.add(Calendar.DAY_OF_MONTH, 1)
-       }
-
-       return targetTime.timeInMillis - currentTime.timeInMillis
-   }*/
-
-
-
-
-
-
-
 
 
 
