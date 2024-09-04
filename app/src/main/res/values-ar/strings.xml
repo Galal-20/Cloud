@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">السحاب</string>
+    <string name="hope_you_a_nice_weather">نتمنى لك طقسًا لطيفًا</string>
+    <string name="cairo_egypt">القاهرة، مصر</string>
+    <string name="today">اليوم</string>
+    <string name="temp">00:00 °م</string>
+    <string name="sunny">مشمس</string>
+    <string name="date">29 يوليو 2023</string>
+    <string name="day">الأحد</string>
+    <string name="mini">00:00/</string>
+    <string name="max">00:00 °م</string>
+
+    <string name="sunset">غروب الشمس</string>
+    <string name="_00_00">00:00</string>
+    <string name="sunrise">شروق الشمس</string>
+    <string name="wind">سرعة الرياح</string>
+    <string name="ooms">00:00 م/ث</string>
+    <string name="condition">الحالة</string>
+    <string name="sea">البحر</string>
+    <string name="_0000_hpa">0000</string>
+    <string name="humidity">الرطوبة</string>
+    <string name="_00">00%</string>
+    <string name="maxT">الحد الأقصى</string>
+    <string name="miniT">الحد الأدنى</string>
+    <string name="time">00:00 ص</string>
+    <string name="settings">الإعدادات</string>
+    <string name="temperature_unit">وحدة درجة الحرارة</string>
+    <string name="celsius">سلسيوس</string>
+    <string name="fahrenheit">فهرنهايت</string>
+    <string name="kelvin">كلفن</string>
+    <string name="wind_unit">وحدة سرعة الرياح</string>
+    <string name="meter_second">متر/ثانية</string>
+    <string name="miles_hour">ميل/ساعة</string>
+    <string name="choose_language">اختر اللغة</string>
+    <string name="arabic">العربية</string>
+    <string name="english">الإنجليزية</string>
+</resources>

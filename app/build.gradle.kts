@@ -35,6 +35,9 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    buildFeatures{
+        viewBinding = true
+    }
 }
 
 dependencies {
@@ -68,6 +71,7 @@ dependencies {
 
     //glide
     implementation (libs.glide)
+    annotationProcessor(libs.compiler)
 
 
     implementation (libs.androidx.navigation.fragment)
@@ -88,9 +92,23 @@ dependencies {
 
 
 
+    implementation(libs.play.services.maps.v1810)
 
     //Timber
-    implementation (libs.timber)
+    //implementation (libs.timber)
+
+    implementation ("com.airbnb.android:lottie:6.1.0")
+
+    implementation (libs.airlocation)
+    implementation("com.daimajia.androidanimations:library:2.4@aar")
+
+    // ViewModel and LiveData
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.4")
+    implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.8.4")
+
+    implementation("androidx.activity:activity-ktx:1.7.2") // Use the latest version available
+
+    implementation("androidx.work:work-runtime-ktx:2.8.1")
 
 
 

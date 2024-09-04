@@ -1,3 +1,42 @@
 <resources>
     <string name="app_name">Cloud</string>
+    <string name="hope_you_a_nice_weather">Hope you a nice weather</string>
+    <string name="cairo_egypt">Cairo, Egypt</string>
+    <string name="today">Today</string>
+    <string name="temp">00:00 °C</string>
+    <string name="sunny">Sunny</string>
+    <string name="date">29 July 2023</string>
+    <string name="day">Sunday</string>
+    <string name="mini">00:00/</string>
+    <string name="max">00:00°C</string>
+
+    <string name="sunset">Sunset</string>
+    <string name="_00_00">00:00</string>
+    <string name="sunrise">Sunrise</string>
+    <string name="wind">Wind Speed</string>
+    <string name="ooms">00:00 m/s</string>
+    <string name="condition">Condition</string>
+    <string name="sea">Sea</string>
+    <string name="_0000_hpa">0000 hpa</string>
+    <string name="humidity">Humidity</string>
+    <string name="_00">00 %</string>
+    <string name="maxT">Max</string>
+    <string name="miniT">Mini</string>
+    <string name="time">00:00 AM</string>
+    <string name="settings">Settings</string>
+    <string name="temperature_unit">Temperature Unit</string>
+    <string name="celsius">Celsius</string>
+    <string name="fahrenheit">Fahrenheit</string>
+    <string name="kelvin">Kelvin</string>
+    <string name="wind_unit">Wind Unit</string>
+    <string name="meter_second">Meter/Second</string>
+    <string name="miles_hour">Miles/Hour</string>
+    <string name="choose_language">Choose language</string>
+    <string name="arabic">Arabic</string>
+    <string name="english">English</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="configure">Configure</string>
+    <string name="add_widget">Add widget</string>
+    <string name="app_widget_description">This is an app widget description</string>
+
 </resources>
