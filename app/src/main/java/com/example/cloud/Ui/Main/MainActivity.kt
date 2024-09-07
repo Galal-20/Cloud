@@ -459,7 +459,6 @@ class MainActivity : AppCompatActivity(), NetworkChangeReceiver.NetworkChangeLis
             object : TapTargetView.Listener() {
                 override fun onTargetClick(view: TapTargetView?) {
                     super.onTargetClick(view)
-
                     showNotificationGuide()
                 }
             })
