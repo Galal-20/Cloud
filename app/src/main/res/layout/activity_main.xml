@@ -11,15 +11,6 @@
     tools:context=".Ui.Main.MainActivity">
 
 
-    <ProgressBar
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/loading"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        />
 
 
     <ImageView
@@ -55,6 +46,7 @@
         android:fontFamily="@font/merriweathersans_bold"
         />
 
+
     <ImageView
         android:layout_width="30dp"
         android:layout_height="30dp"
@@ -78,7 +70,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/favImage"
         app:lottie_autoPlay="true"
-        app:lottie_rawRes="@raw/sun"
         />
 
     <TextView
@@ -172,7 +163,7 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/hours_recycler_view"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:layout_marginStart="10dp"
@@ -180,18 +171,20 @@
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/day_recycler_view"
         app:layout_constraintTop_toBottomOf="@+id/mini_temp" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/day_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_marginTop="10dp"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintEnd_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toTopOf="@id/fram"
         app:layout_constraintTop_toBottomOf="@+id/hours_recycler_view"
         />
@@ -434,9 +427,25 @@
         android:layout_marginTop="20dp"
         android:layout_marginBottom="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/fram"
         app:layout_constraintStart_toStartOf="@+id/fram"
         app:layout_constraintTop_toBottomOf="@id/fram" />
+
+    <ImageView
+        android:id="@+id/open_fav"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:contentDescription="TODO"
+        android:onClick="openFav"
+        android:src="@drawable/open_favorite"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/fram"
+        app:layout_constraintTop_toBottomOf="@id/fram"
+
+        />
+
+
 
 
 

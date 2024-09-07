@@ -70,6 +70,56 @@ class WeatherRepository {
         }
     }
 
+    suspend fun fetchWeatherByCoordinates(lat: Double, lon: Double): Result<Daily> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = retrofit.getWeatherByCoordinates(lat, lon, "6a482dc37ff81d4d3deec39521543316", "metric")
+                if (response.isSuccessful && response.body() != null) {
+                    Log.d("WeatherRepository", "Weather fetched successfully by coordinates: ${response.body()}")
+                    Result.success(response.body()!!)
+                } else {
+                    Result.failure(Throwable("Error retrieving weather data by coordinates"))
+                }
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
+        }
+    }
+
+    suspend fun fetchHourlyForecastByCoordinate(lat: Double, lon: Double): Result<Hourly> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = retrofit.getHourlyForecastByCoordinates(lat, lon,
+                    "6a482dc37ff81d4d3deec39521543316",
+                    "metric")
+                if (response.isSuccessful && response.body() != null) {
+                    Log.d("WeatherRepository", "Hourly forecast fetched successfully: ${response.body()}")
+                    Result.success(response.body()!!)
+                } else {
+                    Result.failure(Throwable("Error retrieving hourly forecast data"))
+                }
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
+        }
+    }
+
+    suspend fun fetchDailyForecastByCoordinate(lat: Double, lon: Double): Result<Daily> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = retrofit.getDailyForecastByCoordinates(lat, lon, 7,
+                    "6a482dc37ff81d4d3deec39521543316","metric")
+                if (response.isSuccessful && response.body() != null) {
+                    Log.d("WeatherRepository", "Daily forecast fetched successfully: ${response.body()}")
+                    Result.success(response.body()!!)
+                } else {
+                    Result.failure(Throwable("Error retrieving daily forecast data"))
+                }
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
+        }
+    }
 }
 
 

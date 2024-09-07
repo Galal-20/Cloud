@@ -20,7 +20,15 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
     private val _dailyForecastData = MutableLiveData<Result<Daily>>()
     val dailyForecastData: LiveData<Result<Daily>> get() = _dailyForecastData
 
+    private val _weatherDataByCoordinates = MutableLiveData<Result<Daily>>()
+    val weatherDataByCoordinates: LiveData<Result<Daily>> get() = _weatherDataByCoordinates
 
+    private val _hourlyForecastDataByCoordinates = MutableLiveData<Result<Hourly>>()
+    val hourlyForecastDataByCoordinates: LiveData<Result<Hourly>> get() = _hourlyForecastDataByCoordinates
+
+
+    private val _dailyForecastDataByCoordinates = MutableLiveData<Result<Daily>>()
+    val dailyForecastDataByCoordinates: LiveData<Result<Daily>> get() = _dailyForecastDataByCoordinates
 
 
     fun fetchWeather(cityName: String) {
@@ -44,6 +52,26 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
         }
     }
 
+    fun fetchWeatherByCoordinates(lat: Double, lon: Double) {
+        viewModelScope.launch {
+            val result = repository.fetchWeatherByCoordinates(lat, lon)
+            _weatherDataByCoordinates.postValue(result)
+        }
+    }
+
+    fun fetchHourlyWeatherByCoordinates(lat:Double, lon: Double){
+        viewModelScope.launch {
+            val result = repository.fetchHourlyForecastByCoordinate(lat, lon)
+            _hourlyForecastDataByCoordinates.postValue(result)
+        }
+    }
+
+    fun fetchDailyWeatherByCoordinates(lat:Double, lon: Double){
+        viewModelScope.launch {
+            val result = repository.fetchDailyForecastByCoordinate(lat, lon)
+            _dailyForecastDataByCoordinates.postValue(result)
+        }
+    }
 
 }
 
