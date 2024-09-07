@@ -23,6 +23,7 @@ osmdroidAndroid = "6.1.14"
 playServicesMaps = "19.0.0"
 playServicesMapsVersion = "18.1.0"
 roomRuntime = "2.6.1"
+taptargetview = "1.13.2"
 timber = "5.0.1"
 workRuntimeKtx = "2.9.1"
 
@@ -55,6 +56,7 @@ play-services-maps = { module = "com.google.android.gms:play-services-maps", ver
 play-services-maps-v1810 = { module = "com.google.android.gms:play-services-maps", version.ref = "playServicesMapsVersion" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "converterGson" }
 retrofit2-converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGsonVersion" }
+taptargetview = { module = "com.github.KeepSafe:TapTargetView", version.ref = "taptargetview" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 
 [plugins]
