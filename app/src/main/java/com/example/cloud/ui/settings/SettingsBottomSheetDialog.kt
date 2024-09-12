@@ -1,4 +1,4 @@
-package com.example.cloud.Ui.Settings
+package com.example.cloud.ui.settings
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -24,27 +24,27 @@ class SettingsBottomSheetDialog : BottomSheetDialogFragment() {
     private lateinit var sharedPreferences: SharedPreferences
 
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.bottom_sheet_settings, container, false)
 
-
         radioArabic = view.findViewById(R.id.radioArabic)
         radioEnglish = view.findViewById(R.id.radioEnglish)
-
         radioCelsius = view.findViewById(R.id.radioCelsius)
         radioFahrenheit = view.findViewById(R.id.radioFahrenheit)
         radioKelvin = view.findViewById(R.id.radioKelvin)
-
         radioMeterSecond = view.findViewById(R.id.radioMeterSecond)
         radioMilesHour = view.findViewById(R.id.radioMilesHour)
-
-
         sharedPreferences = requireContext().getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
 
+        save()
+        setupListeners()
+        return view
+    }
+
+    private fun save(){
         val savedLanguage = sharedPreferences.getString("language", "en")
         if (savedLanguage == "ar") {
             radioArabic.isChecked = true
@@ -65,8 +65,6 @@ class SettingsBottomSheetDialog : BottomSheetDialogFragment() {
             "Miles/Hour" -> radioMilesHour.isChecked = true
         }
 
-        setupListeners()
-        return view
     }
 
     private fun setupListeners() {

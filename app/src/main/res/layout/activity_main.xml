@@ -8,23 +8,36 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/sunny_background"
-    tools:context=".Ui.Main.MainActivity">
-
-
+    tools:context=".ui.main.MainActivity">
 
 
     <ImageView
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:id="@+id/notificationImage"
-        android:contentDescription="TODO"
+        android:contentDescription="@string/image"
         android:src="@drawable/ic_notifications"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginEnd="10dp"
         android:layout_marginTop="30dp"
-        android:onClick="notification"
         />
+
+
+        <TextView
+            android:id="@+id/notification_badge"
+            android:layout_width="20dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/red"
+            android:background="@drawable/badge_background"
+            app:layout_constraintStart_toStartOf="@id/notificationImage"
+            app:layout_constraintTop_toTopOf="@id/notificationImage"
+            android:textSize="15sp"
+            android:layout_marginStart="-6dp"
+            android:layout_marginTop="-6dp"
+            android:gravity="center"
+            android:textStyle="bold"
+            />
 
     <TextView
         android:layout_width="wrap_content"
@@ -42,7 +55,6 @@
         app:layout_constraintBottom_toBottomOf="@id/favImage"
         android:gravity="center"
         android:textSize="16sp"
-        android:onClick="openLocation"
         android:fontFamily="@font/merriweathersans_bold"
         />
 
@@ -57,7 +69,6 @@
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginStart="10dp"
         android:layout_marginTop="30dp"
-        android:onClick="favourites"
         />
 
 
@@ -421,8 +432,7 @@
         android:id="@+id/settings"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:contentDescription="TODO"
-        android:onClick="settings"
+        android:contentDescription="@string/image"
         android:src="@drawable/ic_settings"
         android:layout_marginTop="20dp"
         android:layout_marginBottom="20dp"
@@ -434,8 +444,7 @@
         android:id="@+id/open_fav"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:contentDescription="TODO"
-        android:onClick="openFav"
+        android:contentDescription="@string/image"
         android:src="@drawable/open_favorite"
         android:layout_marginTop="20dp"
         android:layout_marginBottom="20dp"
@@ -444,9 +453,5 @@
         app:layout_constraintTop_toBottomOf="@id/fram"
 
         />
-
-
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
