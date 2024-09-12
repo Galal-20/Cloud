@@ -34,10 +34,17 @@
     <string name="choose_language">Choose language</string>
     <string name="arabic">Arabic</string>
     <string name="english">English</string>
-    <string name="appwidget_text">EXAMPLE</string>
-    <string name="configure">Configure</string>
-    <string name="add_widget">Add widget</string>
-    <string name="app_widget_description">This is an app widget description</string>
     <string name="choose_location">Choose Location</string>
+    <string name="favorite_cities">Favorite Cities</string>
+    <string name="Location_Unknown">Location Unknown</string>
+    <string name="location_text">Please enable location permissions from settings to proceed</string>
+    <string name="check_location">Check your location permission</string>
+    <string name="data_fetch">Data already fetched</string>
+    <string name="Unknown">Unknown</string>
+    <string name="Unable">Unable to fetch city name. Please check your connection.</string>
+    <string name="Invalid">Invalid location data.</string>
+    <string name="Not_Internet">Internet is not available</string>
+    <string name="image">Image</string>
+    <string name="select_location">Please select a location on the map.</string>
 
 </resources>

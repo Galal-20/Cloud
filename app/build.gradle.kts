@@ -3,6 +3,9 @@ import org.jetbrains.kotlin.gradle.model.Kapt
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    id("kotlin-kapt") // Correct way to apply the kapt plugin
+
+
 }
 
 android {
@@ -51,9 +54,14 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
-    //Room
+    /*//Room
     implementation (libs.androidx.room.ktx)
-    implementation (libs.androidx.room.runtime)
+    implementation (libs.androidx.room.runtime)*/
+
+    // Room dependencies
+    implementation("androidx.room:room-runtime:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
+    kapt("androidx.room:room-compiler:2.6.1") // Use kapt for Room
 
     //Retrofit
     implementation (libs.retrofit)

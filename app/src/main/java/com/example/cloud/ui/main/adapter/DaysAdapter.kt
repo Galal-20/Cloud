@@ -1,4 +1,4 @@
-package com.example.cloud.Ui.Main.Adapter
+package com.example.cloud.ui.main.adapter
 
 import android.content.Context
 import android.view.LayoutInflater

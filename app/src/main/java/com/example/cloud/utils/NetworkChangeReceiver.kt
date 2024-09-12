@@ -1,4 +1,4 @@
-package com.example.cloud.Utils
+package com.example.cloud.utils
 
 import android.content.BroadcastReceiver
 import android.content.Context
