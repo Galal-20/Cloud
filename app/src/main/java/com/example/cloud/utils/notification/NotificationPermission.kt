@@ -1,9 +1,10 @@
-package com.example.cloud.utils
+package com.example.cloud.utils.notification
 
 import android.Manifest
 import android.app.Activity
 import android.content.pm.PackageManager
 import android.os.Build
+import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -25,7 +26,7 @@ object NotificationPermission {
                     NOTIFICATION_PERMISSION_REQUEST_CODE
                 )
             } else {
-                Toast.makeText(activity, "Notification permission already granted", Toast.LENGTH_SHORT).show()
+                Log.d("NotificationPermission", "Notification permission already granted")
             }
         }
     }

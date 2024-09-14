@@ -97,7 +97,7 @@ object showUserGuide {
             )
                 .outerCircleColor(R.color.gray)
                 .targetCircleColor(R.color.white)
-                .textColor(android.R.color.black)
+                .textColor(android.R.color.white)
                 .cancelable(false)
                 .transparentTarget(true),
             object : TapTargetView.Listener() {
@@ -116,7 +116,7 @@ object showUserGuide {
             )
                 .outerCircleColor(R.color.gray)
                 .targetCircleColor(R.color.white)
-                .textColor(android.R.color.black)
+                .textColor(android.R.color.white)
                 .cancelable(false)
                 .transparentTarget(true),
             object : TapTargetView.Listener() {
