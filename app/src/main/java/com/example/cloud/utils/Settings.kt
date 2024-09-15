@@ -10,7 +10,7 @@ import java.util.Locale
 
 
 @Suppress("DEPRECATION")
-class Settings{
+object Settings{
 
     fun convertTemperature(tempInCelsius: Double, unit: String): Double {
         return when (unit) {
@@ -77,6 +77,8 @@ class Settings{
         val simpleDateFormat = SimpleDateFormat("EEEE", Locale.getDefault())
         return simpleDateFormat.format(Date())
     }
+
+
 
 
 

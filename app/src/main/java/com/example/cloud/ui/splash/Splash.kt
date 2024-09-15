@@ -1,26 +1,22 @@
 package com.example.cloud.ui.splash
 
-import android.Manifest
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.location.Location
 import android.net.ConnectivityManager
-import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import com.daimajia.androidanimations.library.Techniques
 import com.daimajia.androidanimations.library.YoYo
 import com.example.cloud.R
 import com.example.cloud.ui.main.MainActivity
-import com.example.cloud.utils.NetworkChangeReceiver
+import com.example.cloud.utils.network.NetworkChangeReceiver
 import com.example.cloud.databinding.ActivitySplashBinding
-import com.example.cloud.utils.Check_Network
+import com.example.cloud.utils.network.Check_Network
 import mumayank.com.airlocationlibrary.AirLocation
 import java.util.Locale
 
@@ -52,7 +48,7 @@ class Splash : AppCompatActivity(), AirLocation.Callback, NetworkChangeReceiver.
         YoYo.with(Techniques.FadeIn).duration(3000).playOn(binding.textSplash)
     }
 
-    private fun getLocation() {
+    fun getLocation() {
         airLocation = AirLocation(
             this,
             this,
@@ -69,21 +65,32 @@ class Splash : AppCompatActivity(), AirLocation.Callback, NetworkChangeReceiver.
 
     override fun onSuccess(locations: ArrayList<Location>) {
         if (dataFetched) {
-            Toast.makeText(this, R.string.data_fetch, Toast.LENGTH_SHORT).show()
+            Log.d("Splash", R.string.data_fetch.toString())
         } else {
             lat = locations[0].latitude
             lon = locations[0].longitude
             val geocoder = Geocoder(this, Locale.getDefault())
-            val address = geocoder.getFromLocation(lat, lon, 1)
-            if (address != null) {
-                city = address[0].adminArea + ", " + address[0].countryName
-                dataFetched = true
-                navigateToMainActivity()
-            } else {
-                binding.textSplash.text = R.string.Location_Unknown.toString()
+
+            try {
+                val addressList = geocoder.getFromLocation(lat, lon, 1)
+                if (!addressList.isNullOrEmpty()) {
+                    val address = addressList[0]
+                    city = "${address.adminArea}, ${address.countryName}"
+                    dataFetched = true
+                    navigateToMainActivity()
+                } else {
+                    // Address list is empty or null
+                    Toast.makeText(this, R.string.Invalid, Toast.LENGTH_SHORT).show()
+                    binding.textSplash.text = getString(R.string.Location_Unknown)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                //Toast.makeText(this, R.string.geocoder_service_not_available, Toast.LENGTH_SHORT).show()
+                binding.textSplash.text = getString(R.string.Location_Unknown)
             }
         }
     }
+
 
     private fun navigateToMainActivity() {
         Intent(this, MainActivity::class.java).also {

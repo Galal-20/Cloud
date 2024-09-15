@@ -1,7 +1,9 @@
-package com.example.cloud.utils
+package com.example.cloud.utils.network
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
@@ -9,10 +11,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat.startActivity
 import com.example.cloud.R
+import com.example.cloud.ui.splash.Splash
 import com.google.android.material.snackbar.Snackbar
 
-class Check_Network(private val context: Context, private val rootView: View) : NetworkChangeReceiver.NetworkChangeListener {
+class Check_Network(private val context: Context, private val rootView: View) :
+    NetworkChangeReceiver.NetworkChangeListener {
 
     private var wasConnected = false
 
@@ -20,7 +25,13 @@ class Check_Network(private val context: Context, private val rootView: View) : 
         if (isConnected) {
             if (wasConnected) {
                 showCustomSnackbar("Connected to the Internet", Snackbar.LENGTH_SHORT)
+                val i = Intent(context, Splash::class.java)
+                startActivity(context, i, null)
+                if (context is Activity) {
+                    context.finish()
+                }
                 wasConnected = false
+
             }
         } else {
             showCustomSnackbar("Internet is not available", Snackbar.LENGTH_SHORT)
