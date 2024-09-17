@@ -12,6 +12,7 @@ import com.example.cloud.R
 import com.example.cloud.database.AppDatabase
 import com.example.cloud.database.CurrentWeatherEntity
 import com.example.cloud.utils.PreferencesUtils
+import com.example.cloud.utils.showUserGuide.showSwipeGuide
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -26,8 +27,7 @@ class FavoritesBottomSheetDialog(
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: FavoriteCitiesAdapter
-    private lateinit var titile: TextView
-    private var userGuideView: TapTargetView? = null
+    lateinit var titile: TextView
 
 
 
@@ -65,7 +65,7 @@ class FavoritesBottomSheetDialog(
                 itemTouchHelper.attachToRecyclerView(recyclerView)
 
                 if (!PreferencesUtils.isGuideShown(requireContext())) {
-                    showUserGuide()
+                    showSwipeGuide(this@FavoritesBottomSheetDialog,titile)
                     PreferencesUtils.setGuideShown(requireContext(), true)
                 }
 
@@ -74,25 +74,7 @@ class FavoritesBottomSheetDialog(
 
     }
 
-    private fun showUserGuide() {
-        TapTargetView.showFor(
-            requireActivity(),
-            TapTarget.forView(
-                titile,
-                "Swipe to Delete",
-                "Swipe left on a city to delete it from your favorites."
-            )
-                .outerCircleColor(R.color.gray)
-                .targetCircleColor(R.color.white)
-                .textColor(android.R.color.black)
-                .cancelable(true)
-                .transparentTarget(true),
-            object : TapTargetView.Listener() {
-                override fun onTargetClick(view: TapTargetView?) {
-                    super.onTargetClick(view)
-                    userGuideView?.dismiss(true)
-                }
-            }
-        )
-    }
+
 }
+
+

@@ -26,6 +26,7 @@ roomRuntime = "2.6.1"
 taptargetview = "1.13.2"
 timber = "5.0.1"
 workRuntimeKtx = "2.9.1"
+junitJunit = "4.12"
 
 [libraries]
 airlocation = { module = "com.github.mumayank:AirLocation", version.ref = "airlocation" }
@@ -58,6 +59,7 @@ retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "converte
 retrofit2-converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGsonVersion" }
 taptargetview = { module = "com.github.KeepSafe:TapTargetView", version.ref = "taptargetview" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
+junit-junit = { group = "junit", name = "junit", version.ref = "junitJunit" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

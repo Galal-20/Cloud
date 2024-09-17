@@ -34,4 +34,37 @@
     <string name="choose_language">اختر اللغة</string>
     <string name="arabic">العربية</string>
     <string name="english">الإنجليزية</string>
+
+    <string name="choose_location">اختر الموقع</string>
+    <string name="favorite_cities">المدن المفضلة</string>
+    <string name="Location_Unknown">الموقع غير معروف</string>
+    <string name="location_text">يرجى تمكين أذونات الموقع من الإعدادات للمتابعة</string>
+    <string name="check_location">تحقق من إذن الموقع الخاص بك</string>
+    <string name="data_fetch">تم جلب البيانات بالفعل</string>
+    <string name="Unknown">غير معروف</string>
+    <string name="Unable">غير قادر على جلب اسم المدينة. يرجى التحقق من الاتصال.</string>
+    <string name="Invalid">بيانات الموقع غير صالحة.</string>
+    <string name="Not_Internet">الإنترنت غير متاح</string>
+    <string name="image">صورة</string>
+    <string name="select_location">يرجى تحديد موقع على الخريطة.</string>
+    <string name="add_to_favorites_title">إضافة إلى المفضلة</string>
+    <string name="add_to_favorites_desc">احفظ طقسك المفضل.</string>
+    <string name="notifications_title">الإشعارات</string>
+    <string name="notifications_desc">عرض الإشعارات الأخيرة.</string>
+
+    <string name="settings_title">الإعدادات</string>
+    <string name="settings_desc">تحويل وحدات درجة الحرارة، وحدات سرعة الرياح، وتغيير اللغة.</string>
+
+    <string name="open_favorites_title">فتح الطقس المفضل</string>
+    <string name="open_favorites_desc">عرض الطقس المفضل المحفوظ لديك.</string>
+
+    <string name="hourly_forecast_title">التوقعات لكل ساعة</string>
+    <string name="hourly_forecast_desc">عرض التوقعات الجوية لكل ساعة.</string>
+
+    <string name="daily_forecast_title">التوقعات اليومية</string>
+    <string name="daily_forecast_desc">عرض التوقعات الجوية اليومية.</string>
+    <string name="swipe_guide_title">اسحب للحذف</string>
+    <string name="swipe_guide_desc">اسحب إلى اليسار على المدينة لحذفها من المفضلة.</string>
+
+
 </resources>

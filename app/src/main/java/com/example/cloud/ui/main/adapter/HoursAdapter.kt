@@ -1,5 +1,6 @@
 package com.example.cloud.ui.main.adapter
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -7,6 +8,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.cloud.R
 import com.example.cloud.databinding.HoursItemBinding
 import com.example.cloud.model.HourlyListElement
 import java.text.SimpleDateFormat
@@ -17,14 +19,15 @@ class HoursAdapter : ListAdapter<HourlyListElement, HoursAdapter.HourlyWeatherVi
     (HourlyWeatherDiffCallback()) {
 
     inner class HourlyWeatherViewHolder(private val binding: HoursItemBinding) : RecyclerView.ViewHolder(binding.root) {
+        @SuppressLint("DefaultLocale")
         fun bind(hourlyWeather: HourlyListElement) {
             val unit = binding.root.context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
-                .getString("temperature_unit", "Celsius") ?: "Celsius"
+                .getString("temperature_unit", R.string.celsius.toString()) ?: R.string.celsius.toString()
 
             binding.timeTextView.text = formatTime(hourlyWeather.dt)
 
             val temp = convertTemperature(hourlyWeather.main.temp, unit)
-            binding.hoursDegree.text = String.format("%.1f°%s", temp, getUnitSymbol(unit))
+            binding.hoursDegree.text = String.format("%.0f°%s", temp, getUnitSymbol(unit))
 
             val iconCode = hourlyWeather.weather.firstOrNull()?.icon
             val iconUrl = "https://openweathermap.org/img/wn/${iconCode}@2x.png"
@@ -41,7 +44,7 @@ class HoursAdapter : ListAdapter<HourlyListElement, HoursAdapter.HourlyWeatherVi
                 else -> "C"
             }
         }
-        fun convertTemperature(tempCelsius: Double, unit: String): Double {
+        private fun convertTemperature(tempCelsius: Double, unit: String): Double {
             return when (unit) {
                 "Fahrenheit" -> tempCelsius * 9/5 + 32
                 "Kelvin" -> tempCelsius + 273.15

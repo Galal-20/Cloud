@@ -7,7 +7,7 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.work.*
-import com.example.cloud.repository.WeatherRepository
+import com.example.cloud.repository.WeatherRepositoryImpl
 import com.example.cloud.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -26,7 +26,7 @@ class WeatherNotificationWorker(
 
         return withContext(Dispatchers.IO) {
             try {
-                val weatherRepository = WeatherRepository()
+                val weatherRepository = WeatherRepositoryImpl()
                 val result = weatherRepository.getWeatherDataForNotification(lat, lon)
                 result.fold(
                     onSuccess = { (currentWeather, hourlyForecast, dailyForecast) ->
@@ -34,7 +34,7 @@ class WeatherNotificationWorker(
                         val currentTime = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
 
                         when (currentTime) {
-                            "09:00" -> showNotification(
+                            "05:05" -> showNotification(
                                 "Good Morning.",
                                 "Current Temperature: ${currentWeather.main.temp}°C",
                                 R.drawable.colud_background
@@ -49,13 +49,12 @@ class WeatherNotificationWorker(
                                 "Temperature: ${currentWeather.main.temp}°C",
                                 R.drawable.sunny_background
                             )
-                            "19:00" -> showNotification(
+                            "19:42" -> showNotification(
                                 "Forecast for Tomorrow.",
                                 "Tomorrow's Forecast: Min ${dailyForecast.list[0].temp.min}°C / Max ${dailyForecast.list[0].temp.max}°C",
                                 R.drawable.snow_background
                             )
                             else -> {
-                                // Do nothing if it's not one of the target times
                                 return@withContext Result.success()
                             }
                         }

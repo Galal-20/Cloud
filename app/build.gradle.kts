@@ -20,6 +20,10 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        /*buildConfigField("String", "API_KEY", "6a482dc37ff81d4d3deec39521543316")
+        buildConfigField("String", "UNITS", "metric")*/
+
+
     }
 
     buildTypes {
@@ -40,6 +44,9 @@ android {
     }
     buildFeatures{
         viewBinding = true
+        buildConfig = true
+
+
     }
 }
 
@@ -51,12 +58,11 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     testImplementation(libs.junit)
+    testImplementation(libs.junit.junit)
+    testImplementation(libs.junit.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
-    /*//Room
-    implementation (libs.androidx.room.ktx)
-    implementation (libs.androidx.room.runtime)*/
 
     // Room dependencies
     implementation("androidx.room:room-runtime:2.6.1")
@@ -119,6 +125,13 @@ dependencies {
     implementation("androidx.work:work-runtime-ktx:2.8.1")
 
     implementation(libs.taptargetview)
+
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.mockito:mockito-core:4.6.1")
+    testImplementation("org.mockito:mockito-inline:4.6.1")
+    testImplementation("androidx.test:core:1.4.0")
+    testImplementation("org.robolectric:robolectric:4.10")
+
 
 
 
