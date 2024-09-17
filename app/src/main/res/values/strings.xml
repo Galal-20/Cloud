@@ -46,5 +46,30 @@
     <string name="Not_Internet">Internet is not available</string>
     <string name="image">Image</string>
     <string name="select_location">Please select a location on the map.</string>
+    <string name="add_to_favorites_title">Add to favorites</string>
+    <string name="add_to_favorites_desc">Save your favorite weather.</string>
+    <string name="notifications_title">Notifications</string>
+    <string name="notifications_desc">View recent notifications.</string>
+
+    <string name="settings_title">Settings</string>
+    <string name="settings_desc">Convert temperature units, wind speed units, and change language.</string>
+
+    <string name="open_favorites_title">Open weather Favorites</string>
+    <string name="open_favorites_desc">Show your saved favorite weather.</string>
+
+    <string name="hourly_forecast_title">Hourly Forecast</string>
+    <string name="hourly_forecast_desc">Show hourly weather forecast.</string>
+
+    <string name="daily_forecast_title">Daily Forecast</string>
+    <string name="daily_forecast_desc">Show daily weather forecast.</string>
+    <string name="swipe_guide_title">Swipe to Delete</string>
+    <string name="swipe_guide_desc">Swipe left on a city to delete it from your favorites.</string>
+    <string name="google_maps_key">AIzaSyCAAF_jxsAmyx5ykc-7pqcvZGmMY9RtVQo</string>
+    <string name="unknown">Unknown</string>
+    <string name="no_offline_data_available.">No offline data available.</string>
+    <string name="pascal">hpa</string>
+    <string name="alarm">Alarm</string>
+    <string name="dismiss">Dismiss</string>
+
 
 </resources>

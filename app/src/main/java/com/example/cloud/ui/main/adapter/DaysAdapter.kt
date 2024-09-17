@@ -1,5 +1,6 @@
 package com.example.cloud.ui.main.adapter
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -36,16 +37,17 @@ class DaysAdapter : ListAdapter<ListElement, DaysAdapter.DayViewHolder>(DiffCall
         private val maxDegreeTextView: TextView = itemView.findViewById(R.id.day_max_degree)
         private val minDegreeTextView: TextView = itemView.findViewById(R.id.day_min_degree)
 
+        @SuppressLint("DefaultLocale")
         fun bind(dailyData: ListElement) {
             val unit = itemView.context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
-                .getString("temperature_unit", "Celsius") ?: "Celsius"
+                .getString("temperature_unit", R.string.celsius.toString()) ?: R.string.celsius.toString()
 
             val dateFormat = SimpleDateFormat("EEEE", Locale.getDefault())
             val date = Date(dailyData.dt * 1000)
             dayTextView.text = dateFormat.format(date)
 
             val weatherCondition = dailyData.weather.firstOrNull()
-            weatherDescriptionTextView.text = weatherCondition?.description ?: "Unknown"
+            weatherDescriptionTextView.text = weatherCondition?.description ?: R.string.Unknown.toString()
 
             val iconUrl = "https://openweathermap.org/img/wn/${weatherCondition?.icon}@2x.png"
             Glide.with(itemView.context)
@@ -58,11 +60,11 @@ class DaysAdapter : ListAdapter<ListElement, DaysAdapter.DayViewHolder>(DiffCall
             val minTemp = convertTemperature(dailyData.temp.min, unit)
 
 
-            maxDegreeTextView.text = String.format("%.1f°%s", maxTemp, getUnitSymbol(unit))
-            minDegreeTextView.text = String.format("%.1f°%s", minTemp, getUnitSymbol(unit))
+            maxDegreeTextView.text = String.format("%.0f°%s", maxTemp, getUnitSymbol(unit))
+            minDegreeTextView.text = String.format("%.0f°%s", minTemp, getUnitSymbol(unit))
         }
 
-        fun convertTemperature(tempCelsius: Double, unit: String): Double {
+        private fun convertTemperature(tempCelsius: Double, unit: String): Double {
             return when (unit) {
                 "Fahrenheit" -> tempCelsius * 9/5 + 32
                 "Kelvin" -> tempCelsius + 273.15

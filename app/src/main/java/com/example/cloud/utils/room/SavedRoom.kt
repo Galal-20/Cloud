@@ -9,9 +9,13 @@ import com.example.cloud.database.AppDatabase
 import com.example.cloud.database.CurrentWeatherEntity
 import com.example.cloud.utils.Settings.dayName
 import com.galal.weather.ViewModel.WeatherViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 object WeatherUtils {
+
 
     fun saveWeatherToDatabase(
         context: Context,
@@ -62,7 +66,6 @@ object WeatherUtils {
         }
     }
 
-
     private fun getImageWeatherForCondition(condition: String): String {
         return when (condition) {
             "Clouds", "Mist", "Foggy", "Overcast", "Partly Clouds" ,"Snow" -> "cloud_background"
@@ -83,4 +86,5 @@ object WeatherUtils {
             else -> "default_animation.json"
         }
     }
+
 }
