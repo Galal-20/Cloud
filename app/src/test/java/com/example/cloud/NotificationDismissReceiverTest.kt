@@ -3,7 +3,7 @@ package com.example.cloud
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import com.example.cloud.utils.notification.NotificationDismissReceiver
+import com.example.cloud.ui.notification.pushNotification.NotificationDismissReceiver
 import org.junit.Before
 import org.junit.Test
 import org.mockito.ArgumentCaptor

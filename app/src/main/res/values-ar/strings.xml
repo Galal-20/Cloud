@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">السحاب</string>
     <string name="hope_you_a_nice_weather">نتمنى لك طقسًا لطيفًا</string>
     <string name="cairo_egypt">القاهرة، مصر</string>
@@ -50,7 +50,7 @@
     <string name="add_to_favorites_title">إضافة إلى المفضلة</string>
     <string name="add_to_favorites_desc">احفظ طقسك المفضل.</string>
     <string name="notifications_title">الإشعارات</string>
-    <string name="notifications_desc">عرض الإشعارات الأخيرة.</string>
+    <string name="notifications_desc">عرض الإشعارات الأخيرة.\nتعيين إشعارات المنبه.\nحذف إشعارات المنبه باستخدام إيماءة السحب لليسار.</string>
 
     <string name="settings_title">الإعدادات</string>
     <string name="settings_desc">تحويل وحدات درجة الحرارة، وحدات سرعة الرياح، وتغيير اللغة.</string>
@@ -65,6 +65,24 @@
     <string name="daily_forecast_desc">عرض التوقعات الجوية اليومية.</string>
     <string name="swipe_guide_title">اسحب للحذف</string>
     <string name="swipe_guide_desc">اسحب إلى اليسار على المدينة لحذفها من المفضلة.</string>
+
+    <string name="unknown">غير معروف</string>
+    <string name="no_offline_data_available">لا تتوفر بيانات offline.</string>
+    <string name="pascal">هيكتو باسكال</string>
+    <string name="alarm">منبه</string>
+    <string name="dismiss">إلغاء</string>
+    <string name="date_time">5:30 مساءً الثلاثاء، 17 سبتمبر</string>
+    <string name="alarm_center">مركز المنبه</string>
+    <string name="notification_permission">إذن الإشعارات</string>
+    <string name="open_notification">فتح الإشعار</string>
+    <string name="close_notification">إغلاق الإشعار</string>
+    <string name="alarm_permission">إذن المنبه</string>
+    <string name="close_alarm">إغلاق المنبه</string>
+    <string name="open_alarm">فتح المنبه</string>
+    <string name="granted">تم منح إذن الإشعارات</string>
+    <string name="denied">تم رفض إذن الإشعارات</string>
+    <string name="already">الإشعارات مفعلة بالفعل</string>
+    <string name="version">الإشعارات مفعلة بشكل افتراضي لهذه النسخة</string>
 
 
 </resources>

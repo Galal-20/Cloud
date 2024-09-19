@@ -1,4 +1,4 @@
-package com.example.cloud.utils.notification
+package com.example.cloud.ui.notification.pushNotification
 
 import android.Manifest
 import android.app.Activity
@@ -8,6 +8,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.cloud.R
 
 object NotificationPermission {
 
@@ -39,9 +40,9 @@ object NotificationPermission {
     ) {
         if (requestCode == NOTIFICATION_PERMISSION_REQUEST_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(activity, "Notification permission granted", Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, R.string.granted, Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(activity, "Notification permission denied", Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, R.string.denied, Toast.LENGTH_SHORT).show()
             }
         }
     }

@@ -24,14 +24,14 @@
         android:theme="@style/Theme.Cloud"
         tools:targetApi="31">
 
-        <receiver android:name=".utils.notification.NotificationDismissReceiver" />
+        <receiver android:name=".ui.notification.pushNotification.NotificationDismissReceiver" />
 
-        <service android:name=".ui.notification.AlarmService"
+        <service android:name=".ui.notification.alarm.AlarmService"
             android:enabled="true"
             android:exported="false"/>
 
-        <receiver android:name=".ui.notification.AlarmReceiver" />
-        <receiver android:name=".ui.notification.DismissAlarmReceiver" />
+        <receiver android:name=".ui.notification.alarm.AlarmReceiver" />
+        <receiver android:name=".ui.notification.alarm.DismissAlarmReceiver" />
 
 
 

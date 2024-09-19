@@ -1,4 +1,4 @@
-package com.example.cloud.ui.notification
+package com.example.cloud.ui.notification.alarm
 
 import android.app.NotificationManager
 import android.app.Service
@@ -23,7 +23,6 @@ class AlarmService : Service() {
     private var notificationManager: NotificationManager? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        // Play the alarm sound
         mediaPlayer = MediaPlayer.create(this, R.raw.mixkit_classical_vibes)
         mediaPlayer?.isLooping = true
         mediaPlayer?.start()
@@ -61,7 +60,7 @@ class AlarmService : Service() {
         }
 
         overlayView?.findViewById<TextView>(R.id.alarm_message)?.text = "Weather Alert!"
-        overlayView?.findViewById<TextView>(R.id.des)?.text = "Weather is fine today"
+        overlayView?.findViewById<TextView>(R.id.des)?.text = "Don't forget your weather"
     }
 
     override fun onDestroy() {

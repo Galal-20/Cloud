@@ -1,6 +1,7 @@
 package com.example.cloud.ui.favourites
 
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -42,6 +43,7 @@ class FavoriteCitiesAdapter(
 
     override fun getItemCount(): Int = favoriteCities.size
 
+    @SuppressLint("NotifyDataSetChanged")
     fun removeItem(weatherEntity: CurrentWeatherEntity) {
         favoriteCities.remove(weatherEntity)
         notifyDataSetChanged()
