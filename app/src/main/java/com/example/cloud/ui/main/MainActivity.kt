@@ -20,6 +20,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.cloud.R
 import com.example.cloud.ui.main.adapter.DaysAdapter
@@ -36,10 +38,10 @@ import com.example.cloud.model.HourlyListElement
 import com.example.cloud.model.ListElement
 import com.example.cloud.repository.WeatherRepositoryImpl
 import com.example.cloud.ui.favourites.FavoritesBottomSheetDialog
-import com.example.cloud.ui.notification.AlertBottomSheetDialog
+import com.example.cloud.ui.notification.alarm.AlertBottomSheetDialog
 import com.example.cloud.utils.network.Check_Network
-import com.example.cloud.utils.notification.NotificationPermission
-import com.example.cloud.utils.notification.NotificationScheduler.scheduleWeatherNotifications
+import com.example.cloud.ui.notification.pushNotification.NotificationPermission
+import com.example.cloud.ui.notification.pushNotification.NotificationScheduler.scheduleWeatherNotifications
 import com.example.cloud.utils.PreferencesUtils
 import com.example.cloud.utils.Settings.convertTemperature
 import com.example.cloud.utils.Settings.convertWindSpeed
@@ -202,9 +204,11 @@ class MainActivity : AppCompatActivity(), NetworkChangeReceiver.NetworkChangeLis
     private fun fetchData(){
         if (checkNetwork.isConnectedToInternet(this)) {
             if (lat != 0.0 && lon != 0.0) {
-                weatherViewModel.fetchWeatherByCoordinates(lat, lon)
-                weatherViewModel.fetchHourlyWeatherByCoordinates(lat, lon)
-                weatherViewModel.fetchDailyWeatherByCoordinates(lat, lon)
+                lifecycleScope.launch {
+                    weatherViewModel.fetchWeatherByCoordinates(lat, lon)
+                    weatherViewModel.fetchHourlyWeatherByCoordinates(lat, lon)
+                    weatherViewModel.fetchDailyWeatherByCoordinates(lat, lon)
+                }
                 try {
                     val geocoder = Geocoder(this, Locale.getDefault())
                     val addresses = geocoder.getFromLocation(lat, lon, 1)
@@ -393,7 +397,7 @@ class MainActivity : AppCompatActivity(), NetworkChangeReceiver.NetworkChangeLis
                 if (weatherEntity != null) {
                     showWeatherData(weatherEntity)
                 } else {
-                    Toast.makeText(this@MainActivity, R.string.no_offline_data_available_.toString(), Toast
+                    Toast.makeText(this@MainActivity, R.string.no_offline_data_available.toString(), Toast
                         .LENGTH_SHORT).show()
                 }
             }

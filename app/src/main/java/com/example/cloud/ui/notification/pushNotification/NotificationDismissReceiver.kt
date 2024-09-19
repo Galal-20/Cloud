@@ -1,4 +1,4 @@
-package com.example.cloud.utils.notification
+package com.example.cloud.ui.notification.pushNotification
 
 import android.content.BroadcastReceiver
 import android.content.Context

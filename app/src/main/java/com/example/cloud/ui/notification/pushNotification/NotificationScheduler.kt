@@ -1,4 +1,4 @@
-package com.example.cloud.utils.notification
+package com.example.cloud.ui.notification.pushNotification
 
 import android.content.Context
 import androidx.work.Constraints
@@ -21,7 +21,7 @@ object NotificationScheduler {
             .putDouble("longitude", lon)
             .build()
 
-        val morningRequest = createWorkRequest("05:05", inputData)
+        val morningRequest = createWorkRequest("09:33", inputData)
         workManager.enqueueUniqueWork(
             "MorningWeatherNotification",
             ExistingWorkPolicy.REPLACE,

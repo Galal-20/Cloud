@@ -19,6 +19,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class FavoritesBottomSheetDialog(
     private val appDatabase: AppDatabase,
@@ -46,31 +47,36 @@ class FavoritesBottomSheetDialog(
         super.onViewCreated(view, savedInstanceState)
 
         CoroutineScope(Dispatchers.IO).launch {
-            val favoriteCities = appDatabase.weatherDao().getAllWeatherData()
-            CoroutineScope(Dispatchers.Main).launch {
-                adapter = FavoriteCitiesAdapter(favoriteCities.toMutableList(), { weatherEntity ->
-                    onCitySelected(weatherEntity)
-                   dismiss()
-                },{ weatherEntity ->
-                    CoroutineScope(Dispatchers.IO).launch {
-                        appDatabase.weatherDao().deleteWeather(weatherEntity)
-                        CoroutineScope(Dispatchers.Main).launch {
-                            adapter.removeItem(weatherEntity)
+            // Collect the weather data as Flow
+            appDatabase.weatherDao().getAllWeatherData().collect { favoriteCitiesList ->
+                withContext(Dispatchers.Main) {
+                    adapter = FavoriteCitiesAdapter(favoriteCitiesList.toMutableList(), { weatherEntity ->
+                        onCitySelected(weatherEntity)
+                        dismiss()
+                    }, { weatherEntity ->
+                        // Delete city from database
+                        CoroutineScope(Dispatchers.IO).launch {
+                            appDatabase.weatherDao().deleteWeather(weatherEntity)
+                            withContext(Dispatchers.Main) {
+                                adapter.removeItem(weatherEntity)
+                            }
                         }
+                    })
+                    recyclerView.adapter = adapter
+
+                    // Attach item touch helper for swipe-to-delete functionality
+                    val itemTouchHelper = ItemTouchHelper(SwipeToDeleteCallBack(adapter))
+                    itemTouchHelper.attachToRecyclerView(recyclerView)
+
+                    // Show swipe guide if not shown before
+                    if (isAdded && isVisible && !PreferencesUtils.isGuideShown(requireContext())) {
+                        showSwipeGuide(this@FavoritesBottomSheetDialog, titile)
+                        PreferencesUtils.setGuideShown(requireContext(), true)
                     }
-                })
-                recyclerView.adapter = adapter
-
-                val itemTouchHelper = ItemTouchHelper(SwipeToDeleteCallBack(adapter))
-                itemTouchHelper.attachToRecyclerView(recyclerView)
-
-                if (!PreferencesUtils.isGuideShown(requireContext())) {
-                    showSwipeGuide(this@FavoritesBottomSheetDialog,titile)
-                    PreferencesUtils.setGuideShown(requireContext(), true)
                 }
-
             }
         }
+
 
     }
 

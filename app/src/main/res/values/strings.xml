@@ -49,7 +49,7 @@
     <string name="add_to_favorites_title">Add to favorites</string>
     <string name="add_to_favorites_desc">Save your favorite weather.</string>
     <string name="notifications_title">Notifications</string>
-    <string name="notifications_desc">View recent notifications.</string>
+    <string name="notifications_desc">View recent notifications.\nSet alarm notifications.\nDelete alarm notifications using the swipe left gesture.</string>
 
     <string name="settings_title">Settings</string>
     <string name="settings_desc">Convert temperature units, wind speed units, and change language.</string>
@@ -66,10 +66,24 @@
     <string name="swipe_guide_desc">Swipe left on a city to delete it from your favorites.</string>
     <string name="google_maps_key">AIzaSyCAAF_jxsAmyx5ykc-7pqcvZGmMY9RtVQo</string>
     <string name="unknown">Unknown</string>
-    <string name="no_offline_data_available.">No offline data available.</string>
+    <string name="no_offline_data_available">No offline data available.</string>
     <string name="pascal">hpa</string>
     <string name="alarm">Alarm</string>
     <string name="dismiss">Dismiss</string>
+    <string name="date_time">5:30 PM Tue,Sep 17</string>
+    <string name="alarm_center">Alarm center</string>
+    <string name="notification_permission">Notification Permission</string>
+    <string name="open_notification">Open Notification</string>
+    <string name="close_notification">Close Notification</string>
+    <string name="alarm_permission">Alarm Permission</string>
+    <string name="close_alarm">Close Alarm</string>
+    <string name="open_alarm">Open Alarm</string>
+    <string name="granted">Notification permission granted</string>
+    <string name="denied">Notification permission denied</string>
+    <string name="already">Notifications are already enabled</string>
+    <string name="version">Notifications are enabled by default for this version</string>
+
+
 
 
 </resources>

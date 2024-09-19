@@ -1,4 +1,4 @@
-package com.example.cloud.ui.notification
+package com.example.cloud.ui.notification.alarm
 
 import android.annotation.SuppressLint
 import android.app.NotificationChannel
@@ -7,12 +7,8 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.provider.Settings
 import androidx.core.app.NotificationCompat
 import com.example.cloud.R
-
-
-
 
 class AlarmReceiver : BroadcastReceiver() {
     @SuppressLint("LaunchActivityFromNotification")
@@ -50,7 +46,7 @@ class AlarmReceiver : BroadcastReceiver() {
         val notification = NotificationCompat.Builder(context, "ALARM_CHANNEL")
             .setSmallIcon(R.drawable.ic_notifications)
             .setContentTitle("Weather Alert!")
-            .setContentText("Weather is fine today")
+            .setContentText("Don't forget your weather")
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setOngoing(true)
             .addAction(R.drawable.ic_no_internet, "Dismiss", pendingIntent)
@@ -61,5 +57,7 @@ class AlarmReceiver : BroadcastReceiver() {
         notificationManager.notify(1, notification)
     }
 }
+
+
 
 

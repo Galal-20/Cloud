@@ -66,13 +66,10 @@ class WeatherRepositoryImpl: WeatherRepositoryInterface {
             Daily>> {
         return withContext(Dispatchers.IO) {
             try {
-                // Fetch current weather
                 val currentWeatherResponse = apiService.getWeatherByCoordinates(lat, lon, Secret.appId, Secret.units)
 
-                // Fetch hourly forecast
                 val hourlyForecastResponse = apiService.getHourlyForecastByCoordinates(lat, lon, Secret.appId, Secret.units)
 
-                // Fetch daily forecast
                 val dailyForecastResponse = apiService.getDailyForecastByCoordinates(lat, lon, 7, Secret.appId, Secret.units)
 
                 if (currentWeatherResponse.isSuccessful && hourlyForecastResponse.isSuccessful && dailyForecastResponse.isSuccessful &&
