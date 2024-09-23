@@ -21,7 +21,7 @@ object NotificationScheduler {
             .putDouble("longitude", lon)
             .build()
 
-        val morningRequest = createWorkRequest("09:33", inputData)
+        val morningRequest = createWorkRequest("06:21", inputData)
         workManager.enqueueUniqueWork(
             "MorningWeatherNotification",
             ExistingWorkPolicy.REPLACE,
@@ -42,7 +42,7 @@ object NotificationScheduler {
             afternoonRequest
         )
 
-        val eveningRequest = createWorkRequest("19:42", inputData)
+        val eveningRequest = createWorkRequest("16:27", inputData)
         workManager.enqueueUniqueWork(
             "EveningWeatherNotification",
             ExistingWorkPolicy.REPLACE,

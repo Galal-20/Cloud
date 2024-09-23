@@ -7,7 +7,7 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.work.*
-import com.example.cloud.repository.WeatherRepositoryImpl
+import com.example.cloud.repository.remote.WeatherRepositoryImpl
 import com.example.cloud.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -27,48 +27,61 @@ class WeatherNotificationWorker(
         return withContext(Dispatchers.IO) {
             try {
                 val weatherRepository = WeatherRepositoryImpl()
-                val result = weatherRepository.getWeatherDataForNotification(lat, lon)
-                result.fold(
-                    onSuccess = { (currentWeather, hourlyForecast, dailyForecast) ->
+                var workerResult: Result = Result.success() // Default to success unless an error occurs
 
-                        val currentTime = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
+                // Collecting the Flow from the repository
+                weatherRepository.getWeatherDataForNotification(lat, lon).collect { result ->
+                    result.fold(
+                        onSuccess = { (currentWeather, hourlyForecast, dailyForecast) ->
 
-                        when (currentTime) {
-                            "09:33" -> showNotification(
-                                "Good Morning.",
-                                "Current Temperature: ${currentWeather.main.temp}°C",
-                                R.drawable.colud_background
-                            )
-                            "12:00" -> showNotification(
-                                "Current Temperature.",
-                                "Current Temperature: ${currentWeather.main.temp}°C",
-                                R.drawable.colud_background
-                            )
-                            "15:00" -> showNotification(
-                                "Current Temperature.",
-                                "Temperature: ${currentWeather.main.temp}°C",
-                                R.drawable.sunny_background
-                            )
-                            "19:42" -> showNotification(
-                                "Forecast for Tomorrow.",
-                                "Tomorrow's Forecast: Min ${dailyForecast.list[0].temp.min}°C / Max ${dailyForecast.list[0].temp.max}°C",
-                                R.drawable.snow_background
-                            )
-                            else -> {
-                                return@withContext Result.success()
+                            val currentTime = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
+
+                            when (currentTime) {
+                                "06:21" -> showNotification(
+                                    "Good Morning.",
+                                    "Current Temperature: ${currentWeather.main.temp}°C",
+                                    R.drawable.colud_background
+                                )
+                                "12:00" -> showNotification(
+                                    "Current Temperature.",
+                                    "Current Temperature: ${currentWeather.main.temp}°C",
+                                    R.drawable.colud_background
+                                )
+                                "15:00" -> showNotification(
+                                    "Current Temperature.",
+                                    "Temperature: ${currentWeather.main.temp}°C",
+                                    R.drawable.sunny_background
+                                )
+                                "16:24" -> showNotification(
+                                    "Forecast for Tomorrow.",
+                                    "Tomorrow's Forecast: Min ${dailyForecast.list[0].temp.min}°C / Max ${dailyForecast.list[0].temp.max}°C",
+                                    R.drawable.snow_background
+                                )
+                                else -> {
+                                    // If the time does not match, keep success but return early from the flow
+                                    return@collect
+                                }
                             }
+                        },
+                        onFailure = {
+                            // On failure, update the worker result to failure
+                            workerResult = Result.failure()
                         }
-                    },
-                    onFailure = {
-                        Result.failure()
-                    }
-                )
-                Result.success()
+                    )
+                }
+
+                // Return the result after collection is complete
+                workerResult
+
             } catch (e: Exception) {
+                // Catch and handle exceptions
                 Result.failure()
             }
         }
     }
+
+
+
 
     private fun showNotification(title: String, content: String, imageRes: Int) {
         val notificationManager =

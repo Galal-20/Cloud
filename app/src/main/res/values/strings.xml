@@ -15,11 +15,12 @@
     <string name="sunrise">Sunrise</string>
     <string name="wind">Wind Speed</string>
     <string name="ooms">00:00 m/s</string>
-    <string name="condition">Condition</string>
+    <string name="condition">Cloud</string>
     <string name="sea">Sea</string>
     <string name="_0000_hpa">0000 hpa</string>
     <string name="humidity">Humidity</string>
     <string name="_00">00 %</string>
+    <string name="percentage"> %</string>
     <string name="maxT">Max</string>
     <string name="miniT">Mini</string>
     <string name="time">00:00 AM</string>
@@ -82,7 +83,9 @@
     <string name="denied">Notification permission denied</string>
     <string name="already">Notifications are already enabled</string>
     <string name="version">Notifications are enabled by default for this version</string>
-
+    <string name="weather_saved">Weather data saved to favorites</string>
+    <string name="failed">Failed to save weather data</string>
+    <string name="failed_to_retriev">Failed to retrieve weather data</string>
 
 
 

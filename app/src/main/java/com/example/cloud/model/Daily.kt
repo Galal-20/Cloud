@@ -9,7 +9,7 @@ data class Daily (
     val cod: String,
     val message: Double,
     val list: List<ListElement>,
-
+    val temp: Tempe,
     val base: String,
     val clouds: Clouds,
     val dt: Int,

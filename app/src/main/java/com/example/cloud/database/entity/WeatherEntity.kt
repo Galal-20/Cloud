@@ -1,4 +1,4 @@
-package com.example.cloud.database
+package com.example.cloud.database.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -23,7 +23,8 @@ data class CurrentWeatherEntity(
     val sunrise: Long,
     val humidity: Int,
     val lottieAnimation: String,
-    val imageWeather: String // Added this field
+    val imageWeather: String, // Added this field
+    val clouds: Int
 )
 
 

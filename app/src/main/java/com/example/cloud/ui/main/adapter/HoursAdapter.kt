@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -11,6 +12,8 @@ import com.bumptech.glide.Glide
 import com.example.cloud.R
 import com.example.cloud.databinding.HoursItemBinding
 import com.example.cloud.model.HourlyListElement
+import com.example.cloud.utils.Settings.convertTemperature
+import com.example.cloud.utils.Settings.getUnitSymbol
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -23,6 +26,9 @@ class HoursAdapter : ListAdapter<HourlyListElement, HoursAdapter.HourlyWeatherVi
         fun bind(hourlyWeather: HourlyListElement) {
             val unit = binding.root.context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
                 .getString("temperature_unit", R.string.celsius.toString()) ?: R.string.celsius.toString()
+
+            val animation = AnimationUtils.loadAnimation(itemView.context, R.anim.scale_in_animation)
+            itemView.startAnimation(animation)
 
             binding.timeTextView.text = formatTime(hourlyWeather.dt)
 
@@ -37,20 +43,6 @@ class HoursAdapter : ListAdapter<HourlyListElement, HoursAdapter.HourlyWeatherVi
                 .into(binding.hoursWeatherIcon)
         }
 
-        private fun getUnitSymbol(unit: String): String {
-            return when (unit) {
-                "Fahrenheit" -> "F"
-                "Kelvin" -> "K"
-                else -> "C"
-            }
-        }
-        private fun convertTemperature(tempCelsius: Double, unit: String): Double {
-            return when (unit) {
-                "Fahrenheit" -> tempCelsius * 9/5 + 32
-                "Kelvin" -> tempCelsius + 273.15
-                else -> tempCelsius
-            }
-        }
 
         private fun formatTime(timestamp: Long): String {
             return SimpleDateFormat("hh:mm a", Locale.getDefault()).format(Date(timestamp * 1000))

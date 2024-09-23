@@ -5,6 +5,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
@@ -13,6 +14,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.cloud.R
 import com.example.cloud.model.ListElement
+import com.example.cloud.utils.Settings.convertTemperature
+import com.example.cloud.utils.Settings.getUnitSymbol
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -26,7 +29,8 @@ class DaysAdapter : ListAdapter<ListElement, DaysAdapter.DayViewHolder>(DiffCall
     }
 
     override fun onBindViewHolder(holder: DayViewHolder, position: Int) {
-        val dailyData = getItem(position)
+        val adjustedPosition = position + 1
+        val dailyData = getItem(adjustedPosition)
         holder.bind(dailyData)
     }
 
@@ -41,13 +45,15 @@ class DaysAdapter : ListAdapter<ListElement, DaysAdapter.DayViewHolder>(DiffCall
         fun bind(dailyData: ListElement) {
             val unit = itemView.context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
                 .getString("temperature_unit", R.string.celsius.toString()) ?: R.string.celsius.toString()
+            val animation = AnimationUtils.loadAnimation(itemView.context, R.anim.scale_in_animation)
+            itemView.startAnimation(animation)
 
             val dateFormat = SimpleDateFormat("EEEE", Locale.getDefault())
             val date = Date(dailyData.dt * 1000)
             dayTextView.text = dateFormat.format(date)
 
             val weatherCondition = dailyData.weather.firstOrNull()
-            weatherDescriptionTextView.text = weatherCondition?.description ?: R.string.Unknown.toString()
+            weatherDescriptionTextView.text = weatherCondition?.main ?: R.string.Unknown.toString()
 
             val iconUrl = "https://openweathermap.org/img/wn/${weatherCondition?.icon}@2x.png"
             Glide.with(itemView.context)
@@ -64,21 +70,10 @@ class DaysAdapter : ListAdapter<ListElement, DaysAdapter.DayViewHolder>(DiffCall
             minDegreeTextView.text = String.format("%.0f°%s", minTemp, getUnitSymbol(unit))
         }
 
-        private fun convertTemperature(tempCelsius: Double, unit: String): Double {
-            return when (unit) {
-                "Fahrenheit" -> tempCelsius * 9/5 + 32
-                "Kelvin" -> tempCelsius + 273.15
-                else -> tempCelsius
-            }
-        }
-        private fun getUnitSymbol(unit: String): String {
-            return when (unit) {
-                "Fahrenheit" -> "F"
-                "Kelvin" -> "K"
-                else -> "C"
-            }
-        }
+    }
 
+    override fun getItemCount(): Int {
+        return super.getItemCount() - 1
     }
 
     class DiffCallback : DiffUtil.ItemCallback<ListElement>() {

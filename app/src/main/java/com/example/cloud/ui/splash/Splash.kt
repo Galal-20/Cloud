@@ -13,7 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.daimajia.androidanimations.library.Techniques
 import com.daimajia.androidanimations.library.YoYo
 import com.example.cloud.R
-import com.example.cloud.ui.main.MainActivity
+import com.example.cloud.ui.main.view.MainActivity
 import com.example.cloud.utils.network.NetworkChangeReceiver
 import com.example.cloud.databinding.ActivitySplashBinding
 import com.example.cloud.utils.network.Check_Network
@@ -70,6 +70,7 @@ class Splash : AppCompatActivity(), AirLocation.Callback, NetworkChangeReceiver.
             lat = locations[0].latitude
             lon = locations[0].longitude
             val geocoder = Geocoder(this, Locale.getDefault())
+            //Log.d("Splash", "lat: $lat, lon: $lon")
 
             try {
                 val addressList = geocoder.getFromLocation(lat, lon, 1)

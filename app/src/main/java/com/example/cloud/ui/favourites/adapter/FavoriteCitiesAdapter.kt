@@ -1,4 +1,4 @@
-package com.example.cloud.ui.favourites
+package com.example.cloud.ui.favourites.adapter
 
 
 import android.annotation.SuppressLint
@@ -9,7 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.cloud.R
-import com.example.cloud.database.CurrentWeatherEntity
+import com.example.cloud.database.entity.CurrentWeatherEntity
 
 class FavoriteCitiesAdapter(
     private val favoriteCities: MutableList<CurrentWeatherEntity>,

@@ -5,7 +5,7 @@ import android.app.Activity
 import android.widget.TextView
 import com.example.cloud.R
 import com.example.cloud.databinding.ActivityMainBinding
-import com.example.cloud.ui.favourites.FavoritesBottomSheetDialog
+import com.example.cloud.ui.favourites.view.FavoritesBottomSheetDialog
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetView
 
@@ -90,9 +90,31 @@ object showUserGuide {
             object : TapTargetView.Listener() {
                 override fun onTargetClick(view: TapTargetView?) {
                     super.onTargetClick(view)
-                    showHourlyForecastGuide(activity, binding)
+                    showLocationGuide(activity, binding)
                 }
             })
+    }
+
+    private fun showLocationGuide(activity: Activity, binding: ActivityMainBinding) {
+        TapTargetView.showFor(
+            activity,
+            TapTarget.forView(
+                binding.textLocation,
+                "Location","This is your current location\nYou can set location from map using " +
+                        "pressed on the location text and mark your location from map"
+            )
+                .outerCircleColor(R.color.gray)
+                .targetCircleColor(R.color.white)
+                .textColor(android.R.color.black)
+                .cancelable(false)
+                .transparentTarget(true),
+            object :TapTargetView.Listener(){
+                override fun onTargetClick(view: TapTargetView?) {
+                    super.onTargetClick(view)
+                    showHourlyForecastGuide(activity, binding)
+                }
+            }
+        )
     }
 
     private fun showHourlyForecastGuide(activity: Activity, binding: ActivityMainBinding) {

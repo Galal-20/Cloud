@@ -1,6 +1,7 @@
-package com.example.cloud.database
+package com.example.cloud.database.dao
 
 import androidx.room.*
+import com.example.cloud.database.entity.CurrentWeatherEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
