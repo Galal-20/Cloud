@@ -1,21 +1,21 @@
 package com.example.cloud.utils.room
 
-
 import android.content.Context
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.example.cloud.R
 import com.example.cloud.database.AppDatabase
-import com.example.cloud.database.CurrentWeatherEntity
+import com.example.cloud.database.entity.CurrentWeatherEntity
+import com.example.cloud.repository.local.Fav.WeatherFavRepositoryImp
+import com.example.cloud.ui.favourites.viewModel.FavViewModel
+import com.example.cloud.ui.favourites.viewModel.FavViewModelFactory
 import com.example.cloud.utils.Settings.dayName
 import com.galal.weather.ViewModel.WeatherViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 object WeatherUtils {
-
 
     fun saveWeatherToDatabase(
         context: Context,
@@ -47,24 +47,32 @@ object WeatherUtils {
                         sunrise = weather.sys.sunrise.toLong(),
                         humidity = weather.main.humidity,
                         lottieAnimation = getLottieAnimationForCondition(weatherCondition),
-                        imageWeather = imageWeather
+                        imageWeather = imageWeather,
+                        clouds = weather.clouds.all
                     )
 
-                    (context as? AppCompatActivity)?.lifecycleScope?.launch {
+                    val repository = WeatherFavRepositoryImp(AppDatabase.getDatabase(context).weatherDao())
+                    val viewModel = ViewModelProvider(
+                        context as AppCompatActivity,
+                        FavViewModelFactory(repository)
+                    )[FavViewModel::class.java]
+
+                    context.lifecycleScope.launch {
                         try {
-                            AppDatabase.getDatabase(context).weatherDao().insertWeather(weatherEntity)
-                            Toast.makeText(context, "Weather data saved to favorites", Toast.LENGTH_SHORT).show()
+                            viewModel.insertWeather(weatherEntity)
+                            Toast.makeText(context, R.string.weather_saved, Toast.LENGTH_SHORT).show()
                         } catch (e: Exception) {
-                            Toast.makeText(context, "Failed to save weather data", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, R.string.failed, Toast.LENGTH_SHORT).show()
                         }
                     }
                 },
                 onFailure = {
-                    Toast.makeText(context, "Failed to retrieve weather data", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, R.string.failed_to_retriev.toString(), Toast.LENGTH_SHORT).show()
                 }
             )
         }
     }
+
 
     private fun getImageWeatherForCondition(condition: String): String {
         return when (condition) {
@@ -76,7 +84,6 @@ object WeatherUtils {
         }
     }
 
-
     private fun getLottieAnimationForCondition(condition: String): String {
         return when (condition) {
             "Clouds" -> "cloud_animation.json"
@@ -86,8 +93,6 @@ object WeatherUtils {
             else -> "default_animation.json"
         }
     }
-
 }
-
 
 

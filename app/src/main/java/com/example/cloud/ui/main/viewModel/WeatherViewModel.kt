@@ -1,49 +1,50 @@
 package com.galal.weather.ViewModel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.cloud.database.CurrentWeatherEntity
 import com.example.cloud.model.Daily
 import com.example.cloud.model.Hourly
-import com.example.cloud.repository.WeatherRepositoryImpl
+import com.example.cloud.repository.remote.WeatherRepositoryImpl
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class WeatherViewModel(private val repository: WeatherRepositoryImpl) : ViewModel() {
 
+    private val _weatherDataByCoordinates = MutableStateFlow<Result<Daily>?>(null)
+    val weatherDataByCoordinates: StateFlow<Result<Daily>?> get() = _weatherDataByCoordinates
 
-    private val _weatherDataByCoordinates = MutableLiveData<Result<Daily>>()
-    val weatherDataByCoordinates: LiveData<Result<Daily>> get() = _weatherDataByCoordinates
+    private val _hourlyForecastDataByCoordinates = MutableStateFlow<Result<Hourly>?>(null)
+    val hourlyForecastDataByCoordinates: StateFlow<Result<Hourly>?> get() = _hourlyForecastDataByCoordinates
 
-    private val _hourlyForecastDataByCoordinates = MutableLiveData<Result<Hourly>>()
-    val hourlyForecastDataByCoordinates: LiveData<Result<Hourly>> get() = _hourlyForecastDataByCoordinates
+    private val _dailyForecastDataByCoordinates = MutableStateFlow<Result<Daily>?>(null)
+    val dailyForecastDataByCoordinates: StateFlow<Result<Daily>?> get() = _dailyForecastDataByCoordinates
 
-    private val _dailyForecastDataByCoordinates = MutableLiveData<Result<Daily>>()
-    val dailyForecastDataByCoordinates: LiveData<Result<Daily>> get() = _dailyForecastDataByCoordinates
-
-
-    suspend fun fetchWeatherByCoordinates(lat: Double, lon: Double) {
+    fun fetchWeatherByCoordinates(lat: Double, lon: Double) {
         viewModelScope.launch {
-            val result = repository.fetchWeatherByCoordinates(lat, lon)
-            _weatherDataByCoordinates.postValue(result)
+            repository.fetchWeatherByCoordinates(lat, lon)
+                .collect { result ->
+                    _weatherDataByCoordinates.value = result
+                }
         }
     }
 
-   suspend fun fetchHourlyWeatherByCoordinates(lat:Double, lon: Double){
+    fun fetchHourlyWeatherByCoordinates(lat: Double, lon: Double) {
         viewModelScope.launch {
-            val result = repository.fetchHourlyForecastByCoordinate(lat, lon)
-            _hourlyForecastDataByCoordinates.postValue(result)
+            repository.fetchHourlyForecastByCoordinate(lat, lon)
+                .collect { result ->
+                    _hourlyForecastDataByCoordinates.value = result
+                }
         }
     }
 
-    suspend fun fetchDailyWeatherByCoordinates(lat:Double, lon: Double){
+    fun fetchDailyWeatherByCoordinates(lat: Double, lon: Double) {
         viewModelScope.launch {
-            val result = repository.fetchDailyForecastByCoordinate(lat, lon)
-            _dailyForecastDataByCoordinates.postValue(result)
+            repository.fetchDailyForecastByCoordinate(lat, lon)
+                .collect { result ->
+                    _dailyForecastDataByCoordinates.value = result
+                }
         }
     }
-
 }
 
 

@@ -1,4 +1,4 @@
-package com.example.cloud.ui.favourites
+package com.example.cloud.ui.favourites.view
 
 import android.graphics.Canvas
 import android.graphics.Color
@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.cloud.R
+import com.example.cloud.ui.favourites.adapter.FavoriteCitiesAdapter
 
 class SwipeToDeleteCallBack(private val adapter: FavoriteCitiesAdapter) :
     ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {

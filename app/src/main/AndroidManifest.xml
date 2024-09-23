@@ -51,7 +51,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.main.MainActivity"
+            android:name=".ui.main.view.MainActivity"
             android:exported="false" />
     </application>
 

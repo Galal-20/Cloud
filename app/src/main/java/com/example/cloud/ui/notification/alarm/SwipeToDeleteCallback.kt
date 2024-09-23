@@ -8,7 +8,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.cloud.R
-import com.example.cloud.database.AlarmEntity
+import com.example.cloud.database.entity.AlarmEntity
 import com.example.cloud.ui.notification.adapter.AlarmAdapter
 
 abstract class SwipeToDeleteCallback(private val adapter: AlarmAdapter) :

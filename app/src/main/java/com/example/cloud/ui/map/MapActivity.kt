@@ -6,7 +6,7 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.cloud.R
-import com.example.cloud.ui.main.MainActivity
+import com.example.cloud.ui.main.view.MainActivity
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback

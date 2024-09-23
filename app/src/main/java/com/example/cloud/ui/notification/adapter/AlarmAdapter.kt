@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.cloud.R
-import com.example.cloud.database.AlarmEntity
+import com.example.cloud.database.entity.AlarmEntity
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale

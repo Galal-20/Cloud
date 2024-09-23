@@ -8,7 +8,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/sunny_background"
-    tools:context=".ui.main.MainActivity">
+    tools:context=".ui.main.view.MainActivity">
 
 
     <ImageView
@@ -83,11 +83,23 @@
         app:lottie_autoPlay="true"
         />
 
+   <!-- <TextView
+        android:id="@+id/cond_string"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="@string/condition"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="@+id/lottieAnimationView"
+        app:layout_constraintStart_toStartOf="@id/lottieAnimationView"
+        app:layout_constraintTop_toBottomOf="@+id/lottieAnimationView" />-->
+
     <TextView
         android:id="@+id/today"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/today"
+        android:hint="@string/today"
         android:textColor="@color/black"
         android:textSize="25sp"
         android:layout_marginEnd="20dp"
@@ -170,6 +182,8 @@
         android:layout_marginStart="10dp"
         app:layout_constraintEnd_toStartOf="@id/max_temp"
         app:layout_constraintTop_toTopOf="@+id/max_temp" />
+
+
 
 
     <androidx.recyclerview.widget.RecyclerView
@@ -280,7 +294,8 @@
                     android:text="@string/wind"
                     android:textColor="@color/black"
                     android:textSize="10sp"
-                    tools:ignore="SmallSp" />
+                    tools:ignore="SmallSp"
+                    />
             </LinearLayout>
 
             <LinearLayout
@@ -311,7 +326,9 @@
                     android:gravity="center"
                     android:text="@string/condition"
                     android:textColor="@color/black"
-                    android:textSize="10sp" />
+                    android:textSize="10sp"
+                    tools:ignore="SmallSp"
+                    />
             </LinearLayout>
 
             <LinearLayout

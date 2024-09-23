@@ -2,7 +2,6 @@ package com.example.cloud.ui.notification.alarm
 
 import android.app.AlarmManager
 import android.app.DatePickerDialog
-import android.app.PendingIntent
 import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
@@ -15,24 +14,26 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.cloud.R
-import com.example.cloud.database.AlarmEntity
+import com.example.cloud.database.entity.AlarmEntity
 import com.example.cloud.database.AppDatabase
+import com.example.cloud.repository.local.Alarm.AlarmRepositoryImpl
+import com.example.cloud.ui.notification.viewModel.AlarmViewModel
+import com.example.cloud.ui.notification.viewModel.AlarmViewModelFactory
 import com.example.cloud.ui.notification.adapter.AlarmAdapter
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import java.util.*
 
 class AlertBottomSheetDialog : BottomSheetDialogFragment() {
 
     private var selectedTimeInMillis: Long = 0
     private lateinit var alarmAdapter: AlarmAdapter
+    private lateinit var alarmViewModel: AlarmViewModel
 
     @RequiresApi(Build.VERSION_CODES.S)
     override fun onCreateView(
@@ -40,19 +41,28 @@ class AlertBottomSheetDialog : BottomSheetDialogFragment() {
     ): View? {
         val view = inflater.inflate(R.layout.alert_bottom_sheet_dialog, container, false)
 
+        // Initialize ViewModel
+        val db = AppDatabase.getDatabase(requireContext())
+        val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val alarmRepository = AlarmRepositoryImpl(requireContext(), db.alarmDao(), alarmManager)
+        val viewModelFactory = AlarmViewModelFactory(alarmRepository)
+        alarmViewModel = ViewModelProvider(this, viewModelFactory)[AlarmViewModel::class.java]
+
+        // Set up RecyclerView
         val recyclerView: RecyclerView = view.findViewById(R.id.time_date_recycler_view)
-        alarmAdapter = AlarmAdapter { alarm ->
-            deleteAlarm(alarm)
-        }
+        alarmAdapter = AlarmAdapter { alarm -> deleteAlarm(alarm) }
         recyclerView.adapter = alarmAdapter
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        loadAlarmsFromDatabase()
-
-        val openPickerButton: FloatingActionButton = view.findViewById(R.id.open_picker_date)
-        openPickerButton.setOnClickListener {
-            showDatePicker()
+        // Load alarms via ViewModel
+        alarmViewModel.alarms.observe(viewLifecycleOwner) { alarms ->
+            alarmAdapter.submitList(alarms)
         }
+        alarmViewModel.loadAlarms()
+
+        // Set up FAB to open date picker
+        val openPickerButton: FloatingActionButton = view.findViewById(R.id.open_picker_date)
+        openPickerButton.setOnClickListener { showDatePicker() }
 
         setupSwipeToDelete(recyclerView)
 
@@ -109,24 +119,6 @@ class AlertBottomSheetDialog : BottomSheetDialogFragment() {
         )
         timePickerDialog.show()
     }
-
-    private fun setAlarm(timeInMillis: Long) {
-        val alarmId = System.currentTimeMillis().toInt()
-        val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(context, AlarmReceiver::class.java)
-        val pendingIntent = PendingIntent.getBroadcast(
-            context,
-            alarmId,
-            intent,
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-        )
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, timeInMillis, pendingIntent)
-
-        saveAlarmToDatabase(timeInMillis, alarmId)
-
-        Toast.makeText(requireContext(), "Alarm set for the selected time!", Toast.LENGTH_SHORT).show()
-    }
-
 
     private fun checkOverlayPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -188,51 +180,78 @@ class AlertBottomSheetDialog : BottomSheetDialogFragment() {
         }
     }
 
-    private fun saveAlarmToDatabase(timeInMillis: Long, alarmId: Int) {
-        val alarmEntity = AlarmEntity(id = alarmId, timeInMillis = timeInMillis)
-        val db = AppDatabase.getDatabase(requireContext())
-        val alarmDao = db.alarmDao()
-
-        lifecycleScope.launch {
-            alarmDao.insertAlarm(alarmEntity)
-            loadAlarmsFromDatabase()
-        }
+    private fun setAlarm(timeInMillis: Long) {
+        alarmViewModel.setAlarm(timeInMillis)
+        Toast.makeText(requireContext(), "Alarm set!", Toast.LENGTH_SHORT).show()
     }
 
     private fun deleteAlarm(alarm: AlarmEntity) {
-        val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(context, AlarmReceiver::class.java)
-        val pendingIntent = PendingIntent.getBroadcast(
-            context,
-            alarm.id,
-            intent,
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-        )
-
-        alarmManager.cancel(pendingIntent)
-
-        pendingIntent.cancel()
-
-        val db = AppDatabase.getDatabase(requireContext())
-        val alarmDao = db.alarmDao()
-
-        lifecycleScope.launch {
-            alarmDao.deleteAlarm(alarm)
-            loadAlarmsFromDatabase()
-        }
-    }
-
-
-    private fun loadAlarmsFromDatabase() {
-        val db = AppDatabase.getDatabase(requireContext())
-        val alarmDao = db.alarmDao()
-
-        lifecycleScope.launch {
-            alarmDao.getAllAlarms().collectLatest { alarms ->
-                alarmAdapter.submitList(alarms)
-            }
-        }
+        alarmViewModel.deleteAlarm(alarm)
     }
 }
 
 
+
+
+/*private fun setAlarm(timeInMillis: Long) {
+       val alarmId = System.currentTimeMillis().toInt()
+       val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+       val intent = Intent(context, AlarmReceiver::class.java)
+       val pendingIntent = PendingIntent.getBroadcast(
+           context,
+           alarmId,
+           intent,
+           PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+       )
+       alarmManager.setExact(AlarmManager.RTC_WAKEUP, timeInMillis, pendingIntent)
+
+       saveAlarmToDatabase(timeInMillis, alarmId)
+
+       Toast.makeText(requireContext(), "Alarm set for the selected time!", Toast.LENGTH_SHORT).show()
+   }*/
+
+/*private fun saveAlarmToDatabase(timeInMillis: Long, alarmId: Int) {
+    val alarmEntity = AlarmEntity(id = alarmId, timeInMillis = timeInMillis)
+    val db = AppDatabase.getDatabase(requireContext())
+    val alarmDao = db.alarmDao()
+
+    lifecycleScope.launch {
+        alarmDao.insertAlarm(alarmEntity)
+        loadAlarmsFromDatabase()
+    }
+}
+
+private fun deleteAlarm(alarm: AlarmEntity) {
+    val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+    val intent = Intent(context, AlarmReceiver::class.java)
+    val pendingIntent = PendingIntent.getBroadcast(
+        context,
+        alarm.id,
+        intent,
+        PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+    )
+
+    alarmManager.cancel(pendingIntent)
+
+    pendingIntent.cancel()
+
+    val db = AppDatabase.getDatabase(requireContext())
+    val alarmDao = db.alarmDao()
+
+    lifecycleScope.launch {
+        alarmDao.deleteAlarm(alarm)
+        loadAlarmsFromDatabase()
+    }
+}
+
+
+private fun loadAlarmsFromDatabase() {
+    val db = AppDatabase.getDatabase(requireContext())
+    val alarmDao = db.alarmDao()
+
+    lifecycleScope.launch {
+        alarmDao.getAllAlarms().collectLatest { alarms ->
+            alarmAdapter.submitList(alarms)
+        }
+    }
+}*/

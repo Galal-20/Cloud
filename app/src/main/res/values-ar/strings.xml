@@ -15,7 +15,8 @@
     <string name="sunrise">شروق الشمس</string>
     <string name="wind">سرعة الرياح</string>
     <string name="ooms">00:00 م/ث</string>
-    <string name="condition">الحالة</string>
+    <string name="condition">السحب</string>
+    <string name="percentage"> ٪</string>
     <string name="sea">البحر</string>
     <string name="_0000_hpa">0000</string>
     <string name="humidity">الرطوبة</string>
@@ -83,6 +84,9 @@
     <string name="denied">تم رفض إذن الإشعارات</string>
     <string name="already">الإشعارات مفعلة بالفعل</string>
     <string name="version">الإشعارات مفعلة بشكل افتراضي لهذه النسخة</string>
+    <string name="weather_saved">تم حفظ بيانات الطقس في المفضلة</string>
+    <string name="failed">فشل في حفظ بيانات الطقس</string>
+    <string name="failed_to_retriev">فشل في استرجاع بيانات الطقس</string>
 
 
 </resources>

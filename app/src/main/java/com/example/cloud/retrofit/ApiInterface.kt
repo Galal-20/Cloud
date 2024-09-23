@@ -34,6 +34,7 @@ interface ApiInterface {
         @Query("units") units: String
     ): Response<Daily>
 
+
 }
 
 

@@ -1,4 +1,4 @@
-package com.example.cloud.ui.main
+package com.example.cloud.ui.main.view
 
 import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
@@ -21,7 +21,6 @@ import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.cloud.R
 import com.example.cloud.ui.main.adapter.DaysAdapter
@@ -31,13 +30,16 @@ import com.example.cloud.ui.settings.SettingsBottomSheetDialog
 import com.example.cloud.utils.network.NetworkChangeReceiver
 import com.example.cloud.utils.showUserGuide
 import com.example.cloud.database.AppDatabase
-import com.example.cloud.database.CurrentWeatherEntity
+import com.example.cloud.database.entity.CurrentWeatherEntity
 import com.example.cloud.databinding.ActivityMainBinding
 import com.example.cloud.model.Daily
 import com.example.cloud.model.HourlyListElement
 import com.example.cloud.model.ListElement
-import com.example.cloud.repository.WeatherRepositoryImpl
-import com.example.cloud.ui.favourites.FavoritesBottomSheetDialog
+import com.example.cloud.repository.remote.WeatherRepositoryImpl
+import com.example.cloud.repository.local.Fav.WeatherFavRepositoryImp
+import com.example.cloud.ui.favourites.view.FavoritesBottomSheetDialog
+import com.example.cloud.ui.favourites.viewModel.FavViewModel
+import com.example.cloud.ui.favourites.viewModel.FavViewModelFactory
 import com.example.cloud.ui.notification.alarm.AlertBottomSheetDialog
 import com.example.cloud.utils.network.Check_Network
 import com.example.cloud.ui.notification.pushNotification.NotificationPermission
@@ -67,6 +69,10 @@ class MainActivity : AppCompatActivity(), NetworkChangeReceiver.NetworkChangeLis
 
     private val binding:ActivityMainBinding by lazy { ActivityMainBinding.inflate(layoutInflater) }
     private val weatherViewModel: WeatherViewModel by viewModels { WeatherViewModelFactory(WeatherRepositoryImpl()) }
+    private val favViewModel: FavViewModel by viewModels {
+        FavViewModelFactory(WeatherFavRepositoryImp(AppDatabase.getDatabase(this).weatherDao()))
+    }
+
     private val appDatabase by lazy { AppDatabase.getDatabase(this) }
     private val handle = Handler(Looper.getMainLooper())
     private val updateTimeRunnable = object : Runnable {
@@ -170,37 +176,47 @@ class MainActivity : AppCompatActivity(), NetworkChangeReceiver.NetworkChangeLis
     //**********************************************************************************************
     // Observer & fetchData
     private fun setupObservers() {
-        weatherViewModel.weatherDataByCoordinates.observe(this) { result ->
-            result.fold(
-                onSuccess = { data ->
-                    updateUI(data)
-                },
-                onFailure = {
-                    Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
-                }
-            )
+        lifecycleScope.launchWhenStarted {
+            weatherViewModel.weatherDataByCoordinates.collect { result ->
+                result?.fold(
+                    onSuccess = { data ->
+                        updateUI(data)
+                    },
+                    onFailure = {
+                        Toast.makeText(this@MainActivity, it.message, Toast.LENGTH_SHORT).show()
+                    }
+                )
+            }
         }
-        weatherViewModel.hourlyForecastDataByCoordinates.observe(this){ result ->
-            result.fold(
-                onSuccess = { hourlyForecastResponse ->
-                    setupHourlyForecastRecyclerView(hourlyForecastResponse.list)
-                },
-                onFailure = {
-                    Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
-                }
-            )
+
+        lifecycleScope.launchWhenStarted {
+            weatherViewModel.hourlyForecastDataByCoordinates.collect { result ->
+                result?.fold(
+                    onSuccess = { hourlyForecastResponse ->
+                        setupHourlyForecastRecyclerView(hourlyForecastResponse.list)
+                    },
+                    onFailure = {
+                        Toast.makeText(this@MainActivity, it.message, Toast.LENGTH_SHORT).show()
+                    }
+                )
+            }
         }
-        weatherViewModel.dailyForecastDataByCoordinates.observe(this){ result ->
-            result.fold(
-                onSuccess = { dailyForecastResponse ->
-                    setupDailyForecastRecyclerView(dailyForecastResponse.list)
-                },
-                onFailure = {
-                    Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
-                }
-            )
+
+        lifecycleScope.launchWhenStarted {
+            weatherViewModel.dailyForecastDataByCoordinates.collect { result ->
+                result?.fold(
+                    onSuccess = { dailyForecastResponse ->
+                        setupDailyForecastRecyclerView(dailyForecastResponse.list)
+                    },
+                    onFailure = {
+                        Toast.makeText(this@MainActivity, it.message, Toast.LENGTH_SHORT).show()
+                    }
+                )
+            }
         }
     }
+
+
     private fun fetchData(){
         if (checkNetwork.isConnectedToInternet(this)) {
             if (lat != 0.0 && lon != 0.0) {
@@ -255,7 +271,8 @@ class MainActivity : AppCompatActivity(), NetworkChangeReceiver.NetworkChangeLis
         pressureValue = weather.main.pressure
         binding.sea.text = "$pressureValue $pascalUnit"
         val weatherCondition = weather.weather.firstOrNull()
-        binding.condition.text = weatherCondition?.main ?: R.string.Unknown.toString()
+        binding.today.text = weatherCondition?.main ?: R.string.Unknown.toString()
+        binding.condition.text = weather.clouds.all.toString() + getString(R.string.percentage)
         binding.day.text = dayName()
         binding.date.text = date()
         binding.textLocation.text = city
@@ -359,7 +376,8 @@ class MainActivity : AppCompatActivity(), NetworkChangeReceiver.NetworkChangeLis
         pascalUnit = binding.root.context.getString(R.string.pascal)
         pressureValue = weatherEntity.seaPressure
         binding.sea.text = "$pressureValue $pascalUnit"
-        binding.condition.text = weatherEntity.main
+        binding.today.text = weatherEntity.main
+        binding.condition.text = weatherEntity.clouds.toString() + getString(R.string.percentage)
         changeImageWeatherS(weatherEntity.imageWeather)
         binding.textLocation.text = weatherEntity.city
         binding.date.text = date()
@@ -392,7 +410,7 @@ class MainActivity : AppCompatActivity(), NetworkChangeReceiver.NetworkChangeLis
     }
     private fun loadOfflineData() {
         CoroutineScope(Dispatchers.IO).launch {
-            val weatherEntity = appDatabase.weatherDao().getFirstWeatherItem()
+            val weatherEntity = favViewModel.getFirstWeatherItem()
             withContext(Dispatchers.Main) {
                 if (weatherEntity != null) {
                     showWeatherData(weatherEntity)
@@ -403,6 +421,9 @@ class MainActivity : AppCompatActivity(), NetworkChangeReceiver.NetworkChangeLis
             }
         }
     }
+
+
+
 
     //**********************************************************************************************
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
