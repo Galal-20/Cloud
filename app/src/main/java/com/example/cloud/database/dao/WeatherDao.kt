@@ -20,10 +20,14 @@ interface WeatherDao {
     @Delete
     suspend fun deleteWeather(weather: CurrentWeatherEntity)
 
-
-
+    @Query("SELECT * FROM current_weather WHERE city = :city LIMIT 1")
+    suspend fun getWeatherByCity(city: String): CurrentWeatherEntity?
 
 }
+
+
+
+
 
 
 

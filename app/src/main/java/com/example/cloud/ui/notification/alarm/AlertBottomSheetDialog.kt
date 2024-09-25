@@ -41,26 +41,26 @@ class AlertBottomSheetDialog : BottomSheetDialogFragment() {
     ): View? {
         val view = inflater.inflate(R.layout.alert_bottom_sheet_dialog, container, false)
 
-        // Initialize ViewModel
-        val db = AppDatabase.getDatabase(requireContext())
-        val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val alarmRepository = AlarmRepositoryImpl(requireContext(), db.alarmDao(), alarmManager)
-        val viewModelFactory = AlarmViewModelFactory(alarmRepository)
-        alarmViewModel = ViewModelProvider(this, viewModelFactory)[AlarmViewModel::class.java]
+        //val db = AppDatabase.getDatabase(requireContext())
+        //val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+       // val alarmRepository = AlarmRepositoryImpl(requireContext(), db.alarmDao(), alarmManager)
+       // val viewModelFactory = AlarmViewModelFactory(alarmRepository)
+        alarmViewModel = ViewModelProvider(this,
+            AlarmViewModelFactory(AlarmRepositoryImpl(requireContext(), AppDatabase.getDatabase(requireContext()).alarmDao(),
+                requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            ))
+        )[AlarmViewModel::class.java]
 
-        // Set up RecyclerView
         val recyclerView: RecyclerView = view.findViewById(R.id.time_date_recycler_view)
         alarmAdapter = AlarmAdapter { alarm -> deleteAlarm(alarm) }
         recyclerView.adapter = alarmAdapter
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        // Load alarms via ViewModel
         alarmViewModel.alarms.observe(viewLifecycleOwner) { alarms ->
             alarmAdapter.submitList(alarms)
         }
         alarmViewModel.loadAlarms()
 
-        // Set up FAB to open date picker
         val openPickerButton: FloatingActionButton = view.findViewById(R.id.open_picker_date)
         openPickerButton.setOnClickListener { showDatePicker() }
 
@@ -192,66 +192,3 @@ class AlertBottomSheetDialog : BottomSheetDialogFragment() {
 
 
 
-
-/*private fun setAlarm(timeInMillis: Long) {
-       val alarmId = System.currentTimeMillis().toInt()
-       val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-       val intent = Intent(context, AlarmReceiver::class.java)
-       val pendingIntent = PendingIntent.getBroadcast(
-           context,
-           alarmId,
-           intent,
-           PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-       )
-       alarmManager.setExact(AlarmManager.RTC_WAKEUP, timeInMillis, pendingIntent)
-
-       saveAlarmToDatabase(timeInMillis, alarmId)
-
-       Toast.makeText(requireContext(), "Alarm set for the selected time!", Toast.LENGTH_SHORT).show()
-   }*/
-
-/*private fun saveAlarmToDatabase(timeInMillis: Long, alarmId: Int) {
-    val alarmEntity = AlarmEntity(id = alarmId, timeInMillis = timeInMillis)
-    val db = AppDatabase.getDatabase(requireContext())
-    val alarmDao = db.alarmDao()
-
-    lifecycleScope.launch {
-        alarmDao.insertAlarm(alarmEntity)
-        loadAlarmsFromDatabase()
-    }
-}
-
-private fun deleteAlarm(alarm: AlarmEntity) {
-    val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-    val intent = Intent(context, AlarmReceiver::class.java)
-    val pendingIntent = PendingIntent.getBroadcast(
-        context,
-        alarm.id,
-        intent,
-        PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-    )
-
-    alarmManager.cancel(pendingIntent)
-
-    pendingIntent.cancel()
-
-    val db = AppDatabase.getDatabase(requireContext())
-    val alarmDao = db.alarmDao()
-
-    lifecycleScope.launch {
-        alarmDao.deleteAlarm(alarm)
-        loadAlarmsFromDatabase()
-    }
-}
-
-
-private fun loadAlarmsFromDatabase() {
-    val db = AppDatabase.getDatabase(requireContext())
-    val alarmDao = db.alarmDao()
-
-    lifecycleScope.launch {
-        alarmDao.getAllAlarms().collectLatest { alarms ->
-            alarmAdapter.submitList(alarms)
-        }
-    }
-}*/

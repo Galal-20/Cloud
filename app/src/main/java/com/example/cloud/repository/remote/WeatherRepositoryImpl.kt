@@ -14,42 +14,48 @@ class WeatherRepositoryImpl : WeatherRepositoryInterface {
 
     private val apiService = ApiClient.retrofit
 
-    override fun fetchWeatherByCoordinates(lat: Double, lon: Double): Flow<Result<Daily>> = flow {
-        try {
-            emit(Result.success(apiService.getWeatherByCoordinates(lat, lon, Secret.appId, Secret.units).body()!!))
-        } catch (e: IOException) {
-            emit(Result.failure(Throwable("Network error: ${e.message}")))
+    override fun fetchWeatherByCoordinates(lat: Double, lon: Double): Flow<Daily> = flow {
+        val response = apiService.getWeatherByCoordinates(lat, lon, Secret.appId, Secret.units)
+        if (response.isSuccessful && response.body() != null) {
+            emit(response.body()!!)
+        } else {
+            throw Throwable("Error retrieving weather data")
         }
-    }.flowOn(Dispatchers.IO)
+    }
 
-    override fun fetchHourlyForecastByCoordinate(lat: Double, lon: Double): Flow<Result<Hourly>> = flow {
-        try {
-            emit(Result.success(apiService.getHourlyForecastByCoordinates(lat, lon, Secret.appId, Secret.units).body()!!))
-        } catch (e: IOException) {
-            emit(Result.failure(Throwable("Network error: ${e.message}")))
+    override fun fetchHourlyForecastByCoordinate(lat: Double, lon: Double): Flow<Hourly> = flow {
+        val response = apiService.getHourlyForecastByCoordinates(lat, lon, Secret.appId, Secret.units)
+        if (response.isSuccessful && response.body() != null) {
+            emit(response.body()!!)
+        }else{
+            throw Throwable("Error retrieving weather data")
         }
-    }.flowOn(Dispatchers.IO)
-
-    override fun fetchDailyForecastByCoordinate(lat: Double, lon: Double): Flow<Result<Daily>> = flow {
-        try {
-            emit(Result.success(apiService.getDailyForecastByCoordinates(lat, lon, 8, Secret.appId, Secret.units).body()!!))
-        } catch (e: IOException) {
-            emit(Result.failure(Throwable("Network error: ${e.message}")))
-        }
-    }.flowOn(Dispatchers.IO)
+    }
 
 
-    override fun getWeatherDataForNotification(lat: Double, lon: Double): Flow<Result<Triple<Daily, Hourly, Daily>>> = flow {
-        try {
-            val currentWeather = apiService.getWeatherByCoordinates(lat, lon, Secret.appId, Secret.units).body()!!
-            val hourlyForecast = apiService.getHourlyForecastByCoordinates(lat, lon, Secret.appId, Secret.units).body()!!
-            val dailyForecast = apiService.getDailyForecastByCoordinates(lat, lon, 7, Secret.appId, Secret.units).body()!!
-            emit(Result.success(Triple(currentWeather, hourlyForecast, dailyForecast)))
-        } catch (e: IOException) {
-            emit(Result.failure(Throwable("Network error: ${e.message}")))
+    override fun fetchDailyForecastByCoordinate(lat: Double, lon: Double): Flow<Daily> = flow {
+        val response = apiService.getDailyForecastByCoordinates(lat, lon, 8, Secret.appId, Secret.units)
+        if (response.isSuccessful && response.body() != null) {
+            emit(response.body()!!)
+        }else{
+            throw Throwable("Error retrieving weather data")
         }
-    }.flowOn(Dispatchers.IO)
+    }
+
+    override fun getWeatherDataForNotification(lat: Double, lon: Double): Flow<Triple<Daily, Hourly, Daily>> = flow {
+        val currentWeather = apiService.getWeatherByCoordinates(lat, lon, Secret.appId, Secret.units)
+        val hourlyForecast = apiService.getHourlyForecastByCoordinates(lat, lon, Secret.appId, Secret.units)
+        val dailyForecast = apiService.getDailyForecastByCoordinates(lat, lon, 7, Secret.appId, Secret.units)
+        if (currentWeather.isSuccessful && hourlyForecast.isSuccessful && dailyForecast
+            .isSuccessful){
+            emit(Triple(currentWeather.body()!!, hourlyForecast.body()!!, dailyForecast.body()!!))
+        }else{
+            throw Throwable("Error retrieving weather data")
+        }
+    }
+
+
+
 }
-
 
 

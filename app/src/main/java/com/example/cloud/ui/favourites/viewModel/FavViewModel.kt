@@ -11,11 +11,6 @@ class FavViewModel(private val repository: WeatherFavRepositoryInterface) : View
 
     val allWeatherData: Flow<List<CurrentWeatherEntity>> = repository.getAllWeatherData()
 
-    suspend fun insertWeather(weather: CurrentWeatherEntity) {
-        viewModelScope.launch {
-            repository.insertWeather(weather)
-        }
-    }
 
    suspend fun deleteWeather(weather: CurrentWeatherEntity) {
         viewModelScope.launch {
@@ -27,6 +22,14 @@ class FavViewModel(private val repository: WeatherFavRepositoryInterface) : View
         return repository.getFirstWeatherItem()
     }
 
+
+    suspend fun insertOrUpdateWeather(weather: CurrentWeatherEntity) {
+        val existingWeather = repository.getWeatherByCity(weather.city)
+        viewModelScope.launch {
+            if (existingWeather != null) { repository.deleteWeather(existingWeather) }
+            repository.insertWeather(weather)
+        }
+    }
 
 
 }

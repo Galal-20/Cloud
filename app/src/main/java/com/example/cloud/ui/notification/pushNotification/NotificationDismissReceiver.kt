@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import com.example.cloud.utils.PreferencesUtils
 
 class NotificationDismissReceiver : BroadcastReceiver() {
 
@@ -13,7 +14,7 @@ class NotificationDismissReceiver : BroadcastReceiver() {
 
     private fun decrementBadgeCount(context: Context) {
         val sharedPreferences: SharedPreferences =
-            context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
+            PreferencesUtils.getPreferences(context)
         val currentCount = sharedPreferences.getInt("notification_badge_count", 0)
         if (currentCount > 0) {
             sharedPreferences.edit().putInt("notification_badge_count", currentCount - 1).apply()

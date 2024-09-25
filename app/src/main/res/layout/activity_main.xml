@@ -11,6 +11,17 @@
     tools:context=".ui.main.view.MainActivity">
 
 
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
+
+
     <ImageView
         android:layout_width="30dp"
         android:layout_height="30dp"
@@ -83,17 +94,6 @@
         app:lottie_autoPlay="true"
         />
 
-   <!-- <TextView
-        android:id="@+id/cond_string"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:hint="@string/condition"
-        android:textColor="@color/black"
-        android:textSize="18sp"
-        android:gravity="center"
-        app:layout_constraintEnd_toEndOf="@+id/lottieAnimationView"
-        app:layout_constraintStart_toStartOf="@id/lottieAnimationView"
-        app:layout_constraintTop_toBottomOf="@+id/lottieAnimationView" />-->
 
     <TextView
         android:id="@+id/today"

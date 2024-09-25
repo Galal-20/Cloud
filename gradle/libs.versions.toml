@@ -27,6 +27,7 @@ taptargetview = "1.13.2"
 timber = "5.0.1"
 workRuntimeKtx = "2.9.1"
 junitJunit = "4.12"
+junitKtx = "1.2.1"
 
 [libraries]
 airlocation = { module = "com.github.mumayank:AirLocation", version.ref = "airlocation" }
@@ -60,6 +61,7 @@ retrofit2-converter-gson = { module = "com.squareup.retrofit2:converter-gson", v
 taptargetview = { module = "com.github.KeepSafe:TapTargetView", version.ref = "taptargetview" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 junit-junit = { group = "junit", name = "junit", version.ref = "junitJunit" }
+androidx-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "junitKtx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

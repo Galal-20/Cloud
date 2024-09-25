@@ -31,12 +31,10 @@ class FavoritesBottomSheetDialog(
     private lateinit var adapter: FavoriteCitiesAdapter
     lateinit var title: TextView
 
-    // Create repository instance using WeatherDao
     private val repository by lazy { WeatherFavRepositoryImp(appDatabase.weatherDao()) }
 
-    // Initialize ViewModel using factory and repository
     private val viewModel: FavViewModel by viewModels {
-        FavViewModelFactory(repository) // Pass the repository here
+        FavViewModelFactory(repository)
     }
 
     override fun onCreateView(

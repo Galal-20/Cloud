@@ -8,6 +8,10 @@ interface WeatherFavRepositoryInterface {
     fun getAllWeatherData(): Flow<List<CurrentWeatherEntity>>
     suspend fun getFirstWeatherItem(): CurrentWeatherEntity?
     suspend fun deleteWeather(weather: CurrentWeatherEntity)
+    suspend fun getWeatherByCity(city: String): CurrentWeatherEntity?
+
 }
+
+
 
 

@@ -20,65 +20,104 @@ class WeatherNotificationWorker(
     workerParams: WorkerParameters
 ) : CoroutineWorker(context, workerParams) {
 
-    override suspend fun doWork(): Result {
+   /* override suspend fun doWork(): Result {
         val lat = inputData.getDouble("latitude", 0.0)
         val lon = inputData.getDouble("longitude", 0.0)
 
         return withContext(Dispatchers.IO) {
             try {
                 val weatherRepository = WeatherRepositoryImpl()
-                var workerResult: Result = Result.success() // Default to success unless an error occurs
+                var workerResult: Result = Result.success()
 
-                // Collecting the Flow from the repository
-                weatherRepository.getWeatherDataForNotification(lat, lon).collect { result ->
-                    result.fold(
-                        onSuccess = { (currentWeather, hourlyForecast, dailyForecast) ->
+                weatherRepository.getWeatherDataForNotification(lat, lon).collect { (currentWeather, hourlyForecast, dailyForecast) ->
 
-                            val currentTime = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
+                    val currentTime = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
 
-                            when (currentTime) {
-                                "06:21" -> showNotification(
-                                    "Good Morning.",
-                                    "Current Temperature: ${currentWeather.main.temp}°C",
-                                    R.drawable.colud_background
-                                )
-                                "12:00" -> showNotification(
-                                    "Current Temperature.",
-                                    "Current Temperature: ${currentWeather.main.temp}°C",
-                                    R.drawable.colud_background
-                                )
-                                "15:00" -> showNotification(
-                                    "Current Temperature.",
-                                    "Temperature: ${currentWeather.main.temp}°C",
-                                    R.drawable.sunny_background
-                                )
-                                "16:24" -> showNotification(
-                                    "Forecast for Tomorrow.",
-                                    "Tomorrow's Forecast: Min ${dailyForecast.list[0].temp.min}°C / Max ${dailyForecast.list[0].temp.max}°C",
-                                    R.drawable.snow_background
-                                )
-                                else -> {
-                                    // If the time does not match, keep success but return early from the flow
-                                    return@collect
-                                }
-                            }
-                        },
-                        onFailure = {
-                            // On failure, update the worker result to failure
-                            workerResult = Result.failure()
+                    when (currentTime) {
+                        "06:15" -> showNotification(
+                            "Good Morning.",
+                            "Current Temperature: ${currentWeather.main.temp}°C",
+                            R.drawable.colud_background
+                        )
+                        "12:00" -> showNotification(
+                            "Current Temperature.",
+                            "Current Temperature: ${currentWeather.main.temp}°C",
+                            R.drawable.sunny_background
+                        )
+                        "15:00" -> showNotification(
+                            "Current Temperature.",
+                            "Temperature: ${currentWeather.main.temp}°C",
+                            R.drawable.sunny_background
+                        )
+                        "18:30" -> showNotification(
+                            "Forecast for Tomorrow.",
+                            "Tomorrow's Forecast: Min ${dailyForecast.list[0].temp.min}°C / Max ${dailyForecast.list[0].temp.max}°C",
+                            R.drawable.snow_background
+                        )
+                        else -> {
+                            // Do nothing if the time does not match
                         }
-                    )
+                    }
                 }
 
-                // Return the result after collection is complete
                 workerResult
 
             } catch (e: Exception) {
-                // Catch and handle exceptions
                 Result.failure()
             }
         }
-    }
+    }*/
+   override suspend fun doWork(): Result {
+       val lat = inputData.getDouble("latitude", 0.0)
+       val lon = inputData.getDouble("longitude", 0.0)
+
+       return withContext(Dispatchers.IO) {
+           try {
+               val weatherRepository = WeatherRepositoryImpl()
+
+               // Collecting the Flow from the repository
+               weatherRepository.getWeatherDataForNotification(lat, lon).collect { weatherData ->
+                   val (currentWeather, hourlyForecast, dailyForecast) = weatherData
+
+                   val currentTime = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
+
+                   when (currentTime) {
+                       "08:53" ->showNotification (
+                               "Good Morning.",
+                       "Current Temperature: ${currentWeather.main.temp}°C",
+                       R.drawable.colud_background
+                           )
+                           "12:00"
+                       -> showNotification(
+                           "Current Temperature.",
+                           "Current Temperature: ${hourlyForecast.list[0].main.temp}°C",
+                           R.drawable.sunny_background
+                       )
+                       "15:20" -> showNotification(
+                           "Current Temperature.",
+                           "Temperature: ${hourlyForecast.list[0].main.temp}°C",
+                           R.drawable.sunny_background
+                       )
+
+                       "20:35" -> showNotification(
+                           "Forecast for Tomorrow.",
+                           "Tomorrow's Forecast: Min ${dailyForecast.list[0].temp.min}°C / Max ${dailyForecast.list[0].temp.max}°C",
+                           R.drawable.snow_background
+                       )
+
+                       else -> {
+                           return@collect
+                       }
+                   }
+               }
+
+               Result.success()
+
+           } catch (e: Exception) {
+               Result.failure()
+           }
+       }
+   }
 
 
 
@@ -96,13 +135,6 @@ class WeatherNotificationWorker(
             notificationManager.createNotificationChannel(channel)
         }
 
-       /*
-        val intent = Intent(context, Splash::class.java).apply {
-            putExtra("notification_opened", true)
-        }
-        val pendingIntent = PendingIntent.getActivity(
-            context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )*/
 
 
         // Intent to detect when the notification is dismissed
@@ -119,15 +151,15 @@ class WeatherNotificationWorker(
 
         // Create Notification
         val notification = NotificationCompat.Builder(context, "WeatherChannel")
-            .setSmallIcon(R.drawable.cloud_back) // Replace with your icon
+            .setSmallIcon(R.drawable.cloud_back)
             .setContentTitle(title)
             .setContentText(content)
             .setLargeIcon(context.getDrawable(imageRes)?.toBitmap())
             .setContentIntent(openPendingIntent)
-            .setDeleteIntent(dismissPendingIntent) // Set delete intent.
+            .setDeleteIntent(dismissPendingIntent)
             .setAutoCancel(true)
             .build()
-        notificationManager.notify((0..1000).random(), notification) // Using random ID to allow multiple notifications
+        notificationManager.notify((0..1000).random(), notification)
         incrementBadgeCount()
     }
 

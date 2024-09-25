@@ -33,10 +33,12 @@ import com.example.cloud.database.AppDatabase
 import com.example.cloud.database.entity.CurrentWeatherEntity
 import com.example.cloud.databinding.ActivityMainBinding
 import com.example.cloud.model.Daily
+import com.example.cloud.model.Hourly
 import com.example.cloud.model.HourlyListElement
 import com.example.cloud.model.ListElement
 import com.example.cloud.repository.remote.WeatherRepositoryImpl
 import com.example.cloud.repository.local.Fav.WeatherFavRepositoryImp
+import com.example.cloud.retrofit.ApiState
 import com.example.cloud.ui.favourites.view.FavoritesBottomSheetDialog
 import com.example.cloud.ui.favourites.viewModel.FavViewModel
 import com.example.cloud.ui.favourites.viewModel.FavViewModelFactory
@@ -109,11 +111,17 @@ class MainActivity : AppCompatActivity(), NetworkChangeReceiver.NetworkChangeLis
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(binding.root)
+
+        sharedPreferences = PreferencesUtils.getPreferences(this)
+        val language = PreferencesUtils.getLanguage(this)
+        setLocale(this, language)
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             registerReceiver(badgeCountReceiver, IntentFilter("com.example.cloud.NOTIFICATION_COUNT_UPDATED"),
                 RECEIVER_EXPORTED
             )
         }
+
         checkNetwork = Check_Network(this, findViewById(android.R.id.content))
         networkChangeReceiver = NetworkChangeReceiver(this)
         onClick()
@@ -121,9 +129,7 @@ class MainActivity : AppCompatActivity(), NetworkChangeReceiver.NetworkChangeLis
         lat = intent.getDoubleExtra("latitude", 0.0)
         lon = intent.getDoubleExtra("longitude", 0.0)
         setupObservers()
-        sharedPreferences = getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
-        val language = sharedPreferences.getString("language", "en")
-        setLocale(this,language)
+
         updateNotificationBadge()
         handle.post(updateTimeRunnable)
         handle.post(updateAnimation)
@@ -176,42 +182,92 @@ class MainActivity : AppCompatActivity(), NetworkChangeReceiver.NetworkChangeLis
     //**********************************************************************************************
     // Observer & fetchData
     private fun setupObservers() {
-        lifecycleScope.launchWhenStarted {
-            weatherViewModel.weatherDataByCoordinates.collect { result ->
-                result?.fold(
-                    onSuccess = { data ->
-                        updateUI(data)
-                    },
-                    onFailure = {
-                        Toast.makeText(this@MainActivity, it.message, Toast.LENGTH_SHORT).show()
+        lifecycleScope.launch {
+            weatherViewModel.weatherDataStateFlow.collect { apiState ->
+                when (apiState) {
+                    is ApiState.Loading -> {
+                        binding.progressBar.visibility = View.VISIBLE
                     }
-                )
+
+                    is ApiState.Success -> {
+                        binding.progressBar.visibility = View.GONE
+                        updateUI(apiState.data as Daily)
+                    }
+
+                    is ApiState.Failure -> {
+                        binding.progressBar.visibility = View.GONE
+                        Log.e(
+                            "WeatherError",
+                            "Error retrieving daily forecast data ${apiState.message}"
+                        )
+                    }
+                }
             }
         }
 
+
         lifecycleScope.launchWhenStarted {
-            weatherViewModel.hourlyForecastDataByCoordinates.collect { result ->
-                result?.fold(
-                    onSuccess = { hourlyForecastResponse ->
-                        setupHourlyForecastRecyclerView(hourlyForecastResponse.list)
-                    },
-                    onFailure = {
-                        Toast.makeText(this@MainActivity, it.message, Toast.LENGTH_SHORT).show()
+            weatherViewModel.hourlyForecastDataByCoordinates.collect { apiState ->
+                when (apiState) {
+                    is ApiState.Loading -> {
+                        binding.progressBar.visibility = View.VISIBLE
                     }
-                )
+
+                    is ApiState.Success -> {
+                        binding.progressBar.visibility = View.GONE
+                        val hourlyForecast = apiState.data
+                        if (hourlyForecast is Hourly) {
+                            val hourlyForecastList =
+                                hourlyForecast.list
+                            setupHourlyForecastRecyclerView(hourlyForecastList)
+                        } else {
+                            Log.e(
+                                "WeatherError",
+                                "Unexpected data type: ${hourlyForecast.javaClass}"
+                            )
+                        }
+                    }
+
+                    is ApiState.Failure -> {
+                        binding.progressBar.visibility = View.GONE
+                        Log.e(
+                            "WeatherError",
+                            "Error retrieving hourly forecast data: ${apiState.message}"
+                        )
+                    }
+                }
             }
         }
 
+
         lifecycleScope.launchWhenStarted {
-            weatherViewModel.dailyForecastDataByCoordinates.collect { result ->
-                result?.fold(
-                    onSuccess = { dailyForecastResponse ->
-                        setupDailyForecastRecyclerView(dailyForecastResponse.list)
-                    },
-                    onFailure = {
-                        Toast.makeText(this@MainActivity, it.message, Toast.LENGTH_SHORT).show()
+            weatherViewModel.dailyForecastDataByCoordinates.collect { apiState ->
+                when (apiState) {
+                    is ApiState.Loading -> {
+                       binding.progressBar.visibility = View.VISIBLE
                     }
-                )
+
+                    is ApiState.Success -> {
+                        binding.progressBar.visibility = View.GONE
+                        val dailyForecast = apiState.data
+                        if (dailyForecast is Daily) {
+                            setupDailyForecastRecyclerView(dailyForecast.list)
+                        } else {
+                            Log.e(
+                                "WeatherError",
+                                "Unexpected data type: ${dailyForecast.javaClass}"
+                            )
+                        }
+                    }
+
+                    is ApiState.Failure -> {
+                        binding.progressBar.visibility = View.GONE
+                        Log.e(
+                            "WeatherError",
+                            "Error retrieving hourly forecast data: ${apiState.message}"
+                        )
+                    }
+                }
             }
         }
     }
@@ -221,7 +277,7 @@ class MainActivity : AppCompatActivity(), NetworkChangeReceiver.NetworkChangeLis
         if (checkNetwork.isConnectedToInternet(this)) {
             if (lat != 0.0 && lon != 0.0) {
                 lifecycleScope.launch {
-                    weatherViewModel.fetchWeatherByCoordinates(lat, lon)
+                    weatherViewModel.fetchCurrentWeatherDataByCoordinates(lat, lon)
                     weatherViewModel.fetchHourlyWeatherByCoordinates(lat, lon)
                     weatherViewModel.fetchDailyWeatherByCoordinates(lat, lon)
                 }
@@ -252,9 +308,8 @@ class MainActivity : AppCompatActivity(), NetworkChangeReceiver.NetworkChangeLis
     // update Ui.
     @SuppressLint("DefaultLocale", "SetTextI18n")
     private fun updateUI(weather: Daily) {
-        val unit = sharedPreferences.getString("temperature_unit", R.string.celsius.toString()) ?: R.string.celsius.toString()
-        val windSpeedUnit = sharedPreferences.getString(
-            "wind_speed_unit", R.string.meter_second.toString()) ?: R.string.meter_second.toString()
+        val unit = PreferencesUtils.getTemperatureUnit(this)
+        val windSpeedUnit = PreferencesUtils.getWindSpeedUnit(this)
         val currentTemp = convertTemperature(weather.main.temp, unit)
         val maxTemp = convertTemperature(weather.main.temp_max, unit)
         val minTemp = convertTemperature(weather.main.temp_min, unit)
@@ -291,7 +346,7 @@ class MainActivity : AppCompatActivity(), NetworkChangeReceiver.NetworkChangeLis
                 binding.root.setBackgroundResource(R.drawable.sunny_background)
                 binding.lottieAnimationView.setAnimation(R.raw.sun)
             }
-            "Heavy Rain", "Showers", "Moderate Rain", "Drizzle", "Light Rain" -> {
+            "Heavy Rain", "Rain","Showers", "Moderate Rain", "Drizzle", "Light Rain" -> {
                 binding.root.setBackgroundResource(R.drawable.rain_background)
                 binding.lottieAnimationView.setAnimation(R.raw.rain)
             }
@@ -323,7 +378,6 @@ class MainActivity : AppCompatActivity(), NetworkChangeReceiver.NetworkChangeLis
     }
 
     private fun updateNotificationBadge() {
-        val sharedPreferences = getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
         val notificationCount = sharedPreferences.getInt("notification_badge_count", 0)
         val badgeTextView = findViewById<TextView>(R.id.notification_badge)
         badgeTextView.text = notificationCount.toString()
@@ -413,6 +467,7 @@ class MainActivity : AppCompatActivity(), NetworkChangeReceiver.NetworkChangeLis
             val weatherEntity = favViewModel.getFirstWeatherItem()
             withContext(Dispatchers.Main) {
                 if (weatherEntity != null) {
+                    binding.progressBar.visibility = View.GONE
                     showWeatherData(weatherEntity)
                 } else {
                     Toast.makeText(this@MainActivity, R.string.no_offline_data_available.toString(), Toast

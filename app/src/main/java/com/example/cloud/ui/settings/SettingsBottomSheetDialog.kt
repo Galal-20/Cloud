@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import androidx.core.app.NotificationManagerCompat
 import com.example.cloud.R
 import com.example.cloud.databinding.BottomSheetSettingsBinding
+import com.example.cloud.utils.PreferencesUtils
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
 import java.util.Locale
@@ -29,10 +30,9 @@ class SettingsBottomSheetDialog : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = BottomSheetSettingsBinding.inflate(inflater, container, false)
-//        dialog?.window?.setBackgroundDrawableResource(R.drawable.backgroundshapeweather)
 
 
-        sharedPreferences = requireContext().getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
+        sharedPreferences = PreferencesUtils.getPreferences(requireContext())
 
         loadSavedPreferences()
         setupListeners()
@@ -47,26 +47,26 @@ class SettingsBottomSheetDialog : BottomSheetDialogFragment() {
     }
 
     private fun loadSavedPreferences() {
-        val savedLanguage = sharedPreferences.getString("language", "en")
+        val savedLanguage = PreferencesUtils.getLanguage(requireContext())
         when (savedLanguage) {
             "ar" -> binding.radioArabic.isChecked = true
             else -> binding.radioEnglish.isChecked = true
         }
 
-        val savedUnit = sharedPreferences.getString("temperature_unit", "Celsius")
+        val savedUnit = PreferencesUtils.getTemperatureUnit(requireContext())
         when (savedUnit) {
             "Celsius" -> binding.radioCelsius.isChecked = true
             "Fahrenheit" -> binding.radioFahrenheit.isChecked = true
             "Kelvin" -> binding.radioKelvin.isChecked = true
         }
 
-        val savedSpeedUnit = sharedPreferences.getString("wind_speed_unit", "Meter/Second")
+        val savedSpeedUnit = PreferencesUtils.getWindSpeedUnit(requireContext())
         when (savedSpeedUnit) {
             "Meter/Second" -> binding.radioMeterSecond.isChecked = true
             "Miles/Hour" -> binding.radioMilesHour.isChecked = true
         }
 
-        val notificationsEnabled = sharedPreferences.getBoolean("notifications_enabled", true)
+        val notificationsEnabled =PreferencesUtils.isNotificationsEnabled(requireContext())
         if (notificationsEnabled) {
             binding.openNotification.isChecked = true
         } else {
@@ -75,29 +75,58 @@ class SettingsBottomSheetDialog : BottomSheetDialogFragment() {
     }
 
     private fun setupListeners() {
-        binding.radioArabic.setOnClickListener { setLocale("ar") }
-        binding.radioEnglish.setOnClickListener { setLocale("en") }
+        binding.radioArabic.setOnClickListener { PreferencesUtils.setLanguage(requireContext(), "ar"); setLocale("ar") }
+        binding.radioEnglish.setOnClickListener { PreferencesUtils.setLanguage(requireContext(), "en"); setLocale("en") }
 
-        binding.radioCelsius.setOnClickListener { savePreference("temperature_unit", "Celsius") }
-        binding.radioFahrenheit.setOnClickListener { savePreference("temperature_unit", "Fahrenheit") }
-        binding.radioKelvin.setOnClickListener { savePreference("temperature_unit", "Kelvin") }
 
-        binding.radioMeterSecond.setOnClickListener { savePreference("wind_speed_unit", "Meter/Second") }
-        binding.radioMilesHour.setOnClickListener { savePreference("wind_speed_unit", "Miles/Hour") }
+        binding.radioCelsius.setOnClickListener {
+            savePreference(
+                "${PreferencesUtils.setTemperatureUnit(requireContext(), "Celsius")}",
+                "Celsius"
+            )
+        }
+        binding.radioFahrenheit.setOnClickListener {
+            savePreference(
+                "${PreferencesUtils.setTemperatureUnit(requireContext(), "Fahrenheit")}",
+                "Fahrenheit"
+            )
+        }
+        binding.radioKelvin.setOnClickListener {
+            savePreference(
+                "${PreferencesUtils.setTemperatureUnit(requireContext(), "Kelvin")}",
+                "Kelvin"
+            )
+        }
 
-        binding.openNotification.setOnClickListener { handleNotificationPreference(true) }
-        binding.closeNotification.setOnClickListener { handleNotificationPreference(false) }
+
+        binding.radioMeterSecond.setOnClickListener {
+            savePreference("${PreferencesUtils.setWindSpeedUnit(requireContext(), "Meter/Second")}", "Meter/Second")
+        }
+        binding.radioMilesHour.setOnClickListener {
+            savePreference("${PreferencesUtils.setWindSpeedUnit(requireContext(), "Miles/Hour")}", "Miles/Hour")
+        }
+
+        binding.openNotification.setOnClickListener {
+            PreferencesUtils.setNotificationsEnabled(requireContext(), true); handleNotificationPreference(true);dismiss()
+        }
+        binding.closeNotification.setOnClickListener {
+            PreferencesUtils.setNotificationsEnabled(requireContext(), false);handleNotificationPreference(false); dismiss()
+        }
     }
 
     private fun setLocale(languageCode: String) {
-        sharedPreferences.edit().putString("language", languageCode).apply()
-        val locale = Locale(languageCode)
-        Locale.setDefault(locale)
-        val config = requireContext().resources.configuration
-        config.setLocale(locale)
-        requireContext().resources.updateConfiguration(config, requireContext().resources.displayMetrics)
-        dismiss()
-        requireActivity().recreate()
+        PreferencesUtils.setLanguage(requireContext(), languageCode).also {
+            val locale = Locale(languageCode)
+            Locale.setDefault(locale)
+            val config = requireContext().resources.configuration
+            config.setLocale(locale)
+            requireContext().resources.updateConfiguration(
+                config,
+                requireContext().resources.displayMetrics
+            )
+            dismiss()
+            requireActivity().recreate()
+        }
     }
 
     private fun savePreference(key: String, value: String) {
@@ -118,12 +147,10 @@ class SettingsBottomSheetDialog : BottomSheetDialogFragment() {
                 .putExtra(Settings.EXTRA_APP_PACKAGE, requireContext().packageName)
             startActivity(intent)
         }
-        sharedPreferences.edit().putBoolean("notifications_enabled", enable).apply()
+        //sharedPreferences.edit().putBoolean("notifications_enabled", enable).apply()
+        PreferencesUtils.setNotificationsEnabled(requireContext(), enable)
     }
 
-    private fun showSnackbar(message: String) {
-        Snackbar.make(requireView(), message, Snackbar.LENGTH_SHORT).show()
-    }
 
     override fun onRequestPermissionsResult(
         requestCode: Int, permissions: Array<out String>, grantResults: IntArray
@@ -138,3 +165,5 @@ class SettingsBottomSheetDialog : BottomSheetDialogFragment() {
         }
     }
 }
+
+

@@ -22,6 +22,11 @@ class WeatherFavRepositoryImp(private val weatherDao: WeatherDao): WeatherFavRep
     override suspend fun deleteWeather(weather: CurrentWeatherEntity) {
         weatherDao.deleteWeather(weather)
     }
+
+    override suspend fun getWeatherByCity(city: String): CurrentWeatherEntity? {
+        return weatherDao.getWeatherByCity(city)
+    }
+
 }
 
 
