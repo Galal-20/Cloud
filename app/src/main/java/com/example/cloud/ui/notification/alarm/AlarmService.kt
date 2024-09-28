@@ -1,5 +1,6 @@
 package com.example.cloud.ui.notification.alarm
 
+import android.app.AlarmManager
 import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
@@ -13,7 +14,9 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.TextView
+
 import com.example.cloud.R
+
 
 class AlarmService : Service() {
 
@@ -22,7 +25,9 @@ class AlarmService : Service() {
     private var mediaPlayer: MediaPlayer? = null
     private var notificationManager: NotificationManager? = null
 
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+
         mediaPlayer = MediaPlayer.create(this, R.raw.mixkit_classical_vibes)
         mediaPlayer?.isLooping = true
         mediaPlayer?.start()
@@ -30,6 +35,7 @@ class AlarmService : Service() {
         showAlarmOverlay()
 
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
 
         return START_STICKY
     }
@@ -63,6 +69,7 @@ class AlarmService : Service() {
         overlayView?.findViewById<TextView>(R.id.des)?.text = "Don't forget your weather"
     }
 
+
     override fun onDestroy() {
         super.onDestroy()
         overlayView?.let { windowManager?.removeView(it) }
@@ -75,3 +82,5 @@ class AlarmService : Service() {
         return null
     }
 }
+
+

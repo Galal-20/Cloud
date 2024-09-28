@@ -41,10 +41,6 @@ class AlertBottomSheetDialog : BottomSheetDialogFragment() {
     ): View? {
         val view = inflater.inflate(R.layout.alert_bottom_sheet_dialog, container, false)
 
-        //val db = AppDatabase.getDatabase(requireContext())
-        //val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
-       // val alarmRepository = AlarmRepositoryImpl(requireContext(), db.alarmDao(), alarmManager)
-       // val viewModelFactory = AlarmViewModelFactory(alarmRepository)
         alarmViewModel = ViewModelProvider(this,
             AlarmViewModelFactory(AlarmRepositoryImpl(requireContext(), AppDatabase.getDatabase(requireContext()).alarmDao(),
                 requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -100,6 +96,7 @@ class AlertBottomSheetDialog : BottomSheetDialogFragment() {
             calendar.get(Calendar.MONTH),
             calendar.get(Calendar.DAY_OF_MONTH)
         )
+        datePickerDialog.datePicker.minDate = System.currentTimeMillis()
         datePickerDialog.show()
     }
 
@@ -183,6 +180,7 @@ class AlertBottomSheetDialog : BottomSheetDialogFragment() {
     private fun setAlarm(timeInMillis: Long) {
         alarmViewModel.setAlarm(timeInMillis)
         Toast.makeText(requireContext(), "Alarm set!", Toast.LENGTH_SHORT).show()
+        dismiss()
     }
 
     private fun deleteAlarm(alarm: AlarmEntity) {

@@ -93,7 +93,7 @@ class WeatherNotificationWorker(
                            "Current Temperature: ${hourlyForecast.list[0].main.temp}°C",
                            R.drawable.sunny_background
                        )
-                       "15:20" -> showNotification(
+                       "15:00" -> showNotification(
                            "Current Temperature.",
                            "Temperature: ${hourlyForecast.list[0].main.temp}°C",
                            R.drawable.sunny_background
