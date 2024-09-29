@@ -18,7 +18,7 @@
 </li>
 </ul>
 
-<h2>Libraries and technology:</h2>
+<h2>Libraries and technologies:</h2>
 <ul>
 <li>Retrofit</li>
 <li>Glide</li>
