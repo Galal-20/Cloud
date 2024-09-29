@@ -1,8 +1,6 @@
 package com.example.cloud.ui.notification.alarm
 
-import android.app.AlarmManager
 import android.app.NotificationManager
-import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.graphics.PixelFormat
@@ -14,30 +12,66 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.TextView
+import androidx.lifecycle.LifecycleService
+import androidx.lifecycle.lifecycleScope
 
 import com.example.cloud.R
+import com.example.cloud.model.Daily
+import com.example.cloud.repository.remote.WeatherRepositoryImpl
+import com.example.cloud.retrofit.ApiState
+import com.galal.weather.ViewModel.WeatherViewModel
+import kotlinx.coroutines.launch
 
 
-class AlarmService : Service() {
+class AlarmService : LifecycleService() {
 
     private var windowManager: WindowManager? = null
     private var overlayView: View? = null
     private var mediaPlayer: MediaPlayer? = null
     private var notificationManager: NotificationManager? = null
+    private lateinit var weatherViewModel: WeatherViewModel
 
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        super.onStartCommand(intent, flags, startId)
 
         mediaPlayer = MediaPlayer.create(this, R.raw.mixkit_classical_vibes)
         mediaPlayer?.isLooping = true
         mediaPlayer?.start()
 
-        showAlarmOverlay()
-
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
+        weatherViewModel = WeatherViewModel(WeatherRepositoryImpl(this))
+
+        val lat = intent?.getDoubleExtra("lat", 0.0) ?: 0.0
+        val lon = intent?.getDoubleExtra("lon", 0.0) ?: 0.0
+
+        fetchWeather(lat, lon)
+
+        showAlarmOverlay()
 
         return START_STICKY
+    }
+
+    private fun fetchWeather(lat: Double, lon: Double) {
+        lifecycleScope.launch {
+            weatherViewModel.fetchCurrentWeatherDataByCoordinates(lat, lon)
+            weatherViewModel.weatherDataStateFlow.collect { apiState ->
+                when (apiState) {
+                    is ApiState.Success -> {
+                        val currentTemp = apiState.data
+                        updateUi(currentTemp as Daily)
+                    }
+                    is ApiState.Failure -> {}
+                    is ApiState.Loading -> {}
+                }
+            }
+        }
+    }
+    private fun updateUi(weatherData: Daily){
+        overlayView?.findViewById<TextView>(R.id.des)?.
+        text = "The weather today is ${weatherData.weather.firstOrNull()?.description}"
+
     }
 
     private fun showAlarmOverlay() {
@@ -76,9 +110,12 @@ class AlarmService : Service() {
         overlayView = null
         mediaPlayer?.stop()
         mediaPlayer?.release()
+        notificationManager?.cancel(1)
+
     }
 
-    override fun onBind(intent: Intent?): IBinder? {
+    override fun onBind(intent: Intent): IBinder? {
+        super.onBind(intent)
         return null
     }
 }

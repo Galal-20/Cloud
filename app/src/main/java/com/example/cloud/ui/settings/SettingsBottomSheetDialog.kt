@@ -40,7 +40,6 @@ class SettingsBottomSheetDialog : BottomSheetDialogFragment() {
         return binding.root
     }
 
-    // Clean up binding when the view is destroyed
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -147,7 +146,6 @@ class SettingsBottomSheetDialog : BottomSheetDialogFragment() {
                 .putExtra(Settings.EXTRA_APP_PACKAGE, requireContext().packageName)
             startActivity(intent)
         }
-        //sharedPreferences.edit().putBoolean("notifications_enabled", enable).apply()
         PreferencesUtils.setNotificationsEnabled(requireContext(), enable)
     }
 

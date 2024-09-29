@@ -23,7 +23,7 @@ object WeatherUtils {
         if (state is ApiState.Success) {
             val weather = state.data as com.example.cloud.model.Daily
 
-            val weatherCondition = weather.weather.firstOrNull()?.main ?: "Unknown"
+            val weatherCondition = weather.weather.firstOrNull()?.description ?: "Unknown"
             val imageWeather = getImageWeatherForCondition(weatherCondition)
 
             val weatherEntity = CurrentWeatherEntity(
@@ -58,7 +58,7 @@ object WeatherUtils {
             context.lifecycleScope.launch {
                 try {
                     viewModel.insertOrUpdateWeather(weatherEntity)
-                    Toast.makeText(context, R.string.weather_saved, Toast.LENGTH_SHORT).show()
+                    //Toast.makeText(context, R.string.weather_saved, Toast.LENGTH_SHORT).show()
                 } catch (e: Exception) {
                     Toast.makeText(context, R.string.failed, Toast.LENGTH_SHORT).show()
                 }
@@ -73,9 +73,14 @@ object WeatherUtils {
 
     private fun getImageWeatherForCondition(condition: String): String {
         return when (condition) {
-            "Clouds", "Mist", "Foggy", "Overcast", "Partly Clouds" ,"Snow" -> "cloud_background"
-            "Clear", "Sunny", "Clear Sky" -> "sunny_background"
-            "Heavy Rain", "Showers","Rain", "Moderate Rain", "Drizzle", "Light Rain" -> "rain_background"
+            "Clouds","overcast clouds", "Mist", "Foggy",
+            "Overcast", "Partly Clouds" ,"Snow" , "scattered clouds", "broken clouds", "few clouds"
+            -> "cloud_background"
+            "Clear", "Sunny", "Clear Sky","Sky Is Clear",
+            -> "sunny_background"
+            "Heavy Rain", "Showers","Rain", "Moderate Rain",
+            "Drizzle", "Light Rain" ,"light rain","moderate rain"
+            -> "rain_background"
             "Heavy Snow", "Moderate Snow", "Blizzard", "Light Snow" -> "snow_background"
             else -> "sunny_background"
         }

@@ -22,8 +22,6 @@ class WeatherViewModel(private val repository: WeatherRepositoryImpl) : ViewMode
     val dailyForecastDataByCoordinates: StateFlow<ApiState> get() = _dailyForecastDataByCoordinates
 
 
-    private val _notificationWeatherDataStateFlow = MutableStateFlow<ApiState>(ApiState.Loading)
-    val notificationWeatherDataStateFlow: StateFlow<ApiState> get() = _notificationWeatherDataStateFlow
 
 
     fun fetchCurrentWeatherDataByCoordinates(lat: Double, lon: Double) {
@@ -65,18 +63,6 @@ class WeatherViewModel(private val repository: WeatherRepositoryImpl) : ViewMode
         }
     }
 
-    fun fetchWeatherDataForNotification(lat: Double, lon: Double) {
-        viewModelScope.launch {
-            _notificationWeatherDataStateFlow.value = ApiState.Loading
-            repository.getWeatherDataForNotification(lat, lon)
-                .catch { exception ->
-                    _notificationWeatherDataStateFlow.value = ApiState.Failure(exception.message ?: "Unknown Error")
-                }
-                .collect { weatherData ->
-                    _notificationWeatherDataStateFlow.value = ApiState.Success(weatherData)
-                }
-        }
-    }
 }
 
 

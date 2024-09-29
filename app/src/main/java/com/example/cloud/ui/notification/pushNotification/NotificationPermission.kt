@@ -32,7 +32,6 @@ object NotificationPermission {
         }
     }
 
-    // Function to handle permission result
     fun handlePermissionResult(
         activity: Activity,
         requestCode: Int,

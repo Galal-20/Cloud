@@ -30,7 +30,6 @@ import com.example.cloud.ui.settings.SettingsBottomSheetDialog
 import com.example.cloud.utils.network.NetworkChangeReceiver
 import com.example.cloud.utils.showUserGuide
 import com.example.cloud.database.AppDatabase
-import com.example.cloud.database.entity.CurrentWeatherEntity
 import com.example.cloud.databinding.ActivityMainBinding
 import com.example.cloud.model.Daily
 import com.example.cloud.model.Hourly
@@ -46,6 +45,8 @@ import com.example.cloud.ui.notification.alarm.AlertBottomSheetDialog
 import com.example.cloud.utils.network.Check_Network
 import com.example.cloud.ui.notification.pushNotification.NotificationPermission
 import com.example.cloud.ui.notification.pushNotification.NotificationScheduler.scheduleWeatherNotifications
+import com.example.cloud.ui.offline.OfflineActivity
+import com.example.cloud.ui.splash.Splash
 import com.example.cloud.utils.PreferencesUtils
 import com.example.cloud.utils.Settings.convertTemperature
 import com.example.cloud.utils.Settings.convertWindSpeed
@@ -59,8 +60,6 @@ import com.example.cloud.utils.Settings.updateCurrentTime
 import com.example.cloud.utils.room.WeatherUtils.saveWeatherToDatabase
 import com.galal.weather.ViewModel.WeatherViewModel
 import com.galal.weather.ViewModel.WeatherViewModelFactory
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -149,7 +148,6 @@ class MainActivity : AppCompatActivity(), NetworkChangeReceiver.NetworkChangeLis
 
     }
 
-    // lifecycle
     override fun onResume() {
         super.onResume()
         val filter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
@@ -177,14 +175,8 @@ class MainActivity : AppCompatActivity(), NetworkChangeReceiver.NetworkChangeLis
             fetchData()
         } else {
             Log.d("MainActivity", "Internet is not available. Showing offline data.")
-            //loadOfflineData()
             lifecycleScope.launch {
-                //loadWeatherDataFromSharedPreferences()
-                if (favViewModel.getFirstWeatherItem()==null){
-                    loadWeatherDataFromSharedPreferences()
-                }else {
                     loadOfflineData()
-                }
             }
         }
     }
@@ -212,11 +204,10 @@ class MainActivity : AppCompatActivity(), NetworkChangeReceiver.NetworkChangeLis
                         if (apiState.data is Daily) {
                             currentData = apiState.data
 
-                            // Fetch and check the hourly forecast data
                             when (val hourlyState = weatherViewModel.hourlyForecastDataByCoordinates.value) {
                                 is ApiState.Success -> {
                                     if (hourlyState.data is Hourly) {
-                                        hourlyData = hourlyState.data.list // Assuming list is the correct property
+                                        hourlyData = hourlyState.data.list
                                     } else {
                                         Log.e("WeatherError", "Expected Hourly data but received: ${hourlyState.data::class.simpleName}")
                                         hourlyData = emptyList()
@@ -230,13 +221,12 @@ class MainActivity : AppCompatActivity(), NetworkChangeReceiver.NetworkChangeLis
                                 }
                             }
 
-                            // Fetch and check the daily forecast data
                             when (val dailyState = weatherViewModel.dailyForecastDataByCoordinates.value) {
                                 is ApiState.Success -> {
-                                    if (dailyState.data is Daily) {
-                                        dailyForecastList = dailyState.data.list
+                                    dailyForecastList = if (dailyState.data is Daily) {
+                                        dailyState.data.list
                                     }else{
-                                        dailyForecastList = emptyList()
+                                        emptyList()
                                     }
 
                                 }
@@ -249,17 +239,10 @@ class MainActivity : AppCompatActivity(), NetworkChangeReceiver.NetworkChangeLis
                                 }
                             }
 
-                            // Update the UI with retrieved data
                             updateUI(currentData!!)
+                            saveWeatherToDatabase(this@MainActivity, weatherViewModel, lat, lon, city)
                             setupHourlyForecastRecyclerView(hourlyData)
                             setupDailyForecastRecyclerView(dailyForecastList)
-                            lifecycleScope.launch {
-                                saveWeatherDataToSharedPreferences(
-                                    currentData!!,
-                                    hourlyData,
-                                    dailyForecastList
-                                )
-                            }
 
                         } else {
                             Log.e("WeatherError", "Expected Daily data but received: ${apiState.data::class.simpleName}")
@@ -471,78 +454,65 @@ class MainActivity : AppCompatActivity(), NetworkChangeReceiver.NetworkChangeLis
         if (isFavorites) {
             binding.favImage.setImageResource(R.drawable.added_to_favorite)
             saveWeatherToDatabase(this, weatherViewModel, lat, lon, city)
+            Toast.makeText(this, R.string.weather_saved, Toast.LENGTH_SHORT).show()
+
         }
     }
 
-    private fun updateFavouriteIcon() = isFavorites.takeIf { it }?.let { binding.favImage.setImageResource(R.drawable.added_to_favorite) }
+    private fun updateFavouriteIcon() {
+        if (isFavorites) {
+            binding.favImage.setImageResource(R.drawable.added_to_favorite)
+        } else {
+            binding.favImage.setImageResource(R.drawable.ic_favorite)
+        }
+    }
 
     private fun openLocation() {
         val intent = Intent(this, MapActivity::class.java)
         intent.putExtra("latitude", lat)
         intent.putExtra("longitude", lon)
         startActivity(intent)
+        finish()
     }
 
     private fun settings() = SettingsBottomSheetDialog().show(supportFragmentManager, "SettingsBottomSheetDialog")
 
-    private fun openFav() = FavoritesBottomSheetDialog(appDatabase,::showWeatherData).show(supportFragmentManager, "FavoritesBottomSheetDialog")
-
-
+    private fun openFav() {
+        val favoritesBottomSheetDialog = FavoritesBottomSheetDialog(appDatabase, ::onCityDeleted)
+        favoritesBottomSheetDialog.show(supportFragmentManager, "FavoritesBottomSheetDialog")
+    }
+    private fun onCityDeleted() {
+        isFavorites = false
+        binding.favImage.setImageResource(R.drawable.ic_favorite)
+        startActivity(Intent(this, Splash::class.java))
+        finish()
+    }
     //**********************************************************************************************
     // Database:
     @SuppressLint("DefaultLocale", "SetTextI18n")
-    private fun showWeatherData(weatherEntity: CurrentWeatherEntity) {
-        binding.temp.text = String.format("%.0f°%s", weatherEntity.temperature, getUnitSymbol(R.string.celsius.toString()))
-        binding.maxTemp.text = String.format("%.0f°%s", weatherEntity.temperatureMax, getUnitSymbol(R.string.celsius.toString()))
-        binding.miniTemp.text = String.format("%.0f°%s/", weatherEntity.temperatureMin, getUnitSymbol(R.string.celsius.toString()))
-        binding.humidity.text = "${weatherEntity.humidity} %"
-        binding.windSpeed.text = String.format(Locale.getDefault(),
-            "%.0f %s", weatherEntity.windSpeed,
-            getWindSpeedUnitSymbol(R.string.meter_second.toString()))
-        binding.sunrisee.text = time(weatherEntity.sunrise)
-        binding.sunset.text = time(weatherEntity.sunset)
-        pascalUnit = binding.root.context.getString(R.string.pascal)
-        pressureValue = weatherEntity.seaPressure
-        binding.sea.text = "$pressureValue $pascalUnit"
-        binding.today.text = weatherEntity.description
-        binding.condition.text = weatherEntity.clouds.toString() + getString(R.string.percentage)
-        changeImageWeatherS(weatherEntity.imageWeather)
-        binding.textLocation.text = weatherEntity.city
-        binding.date.text = date()
-        binding.time.text = time(System.currentTimeMillis() / 1000)
-        binding.day.text = dayName()
-    }
-    private fun changeImageWeatherS(imageWeather: String) {
-        when (imageWeather) {
-            "cloud_background" -> {
-                binding.root.setBackgroundResource(R.drawable.colud_background)
-                binding.lottieAnimationView.setAnimation(R.raw.cloud)
-            }
-            "sunny_background" -> {
-                binding.root.setBackgroundResource(R.drawable.sunny_background)
-                binding.lottieAnimationView.setAnimation(R.raw.sun)
-            }
-            "rain_background" -> {
-                binding.root.setBackgroundResource(R.drawable.rain_background)
-                binding.lottieAnimationView.setAnimation(R.raw.rain)
-            }
-            "snow_background" -> {
-                binding.root.setBackgroundResource(R.drawable.snow_background)
-                binding.lottieAnimationView.setAnimation(R.raw.snow)
-            }
-            else -> {
-                binding.root.setBackgroundResource(R.drawable.sunny_background)
-                binding.lottieAnimationView.setAnimation(R.raw.sun)
-            }
-        }
-    }
-    private fun loadOfflineData() {
+    private suspend fun loadOfflineData() {
         CoroutineScope(Dispatchers.IO).launch {
             val weatherEntity = favViewModel.getFirstWeatherItem()
             withContext(Dispatchers.Main) {
                 if (weatherEntity != null) {
                     binding.progressBar.visibility = View.GONE
-                    showWeatherData(weatherEntity)
+                    binding.favImage.visibility = View.INVISIBLE
+                    val intent = Intent(this@MainActivity, OfflineActivity::class.java).apply {
+                        putExtra("temperature", weatherEntity.temperature)
+                        putExtra("temperatureMax", weatherEntity.temperatureMax)
+                        putExtra("temperatureMin", weatherEntity.temperatureMin)
+                        putExtra("humidity", weatherEntity.humidity)
+                        putExtra("windSpeed", weatherEntity.windSpeed)
+                        putExtra("seaPressure", weatherEntity.seaPressure)
+                        putExtra("sunrise", weatherEntity.sunrise)
+                        putExtra("sunset", weatherEntity.sunset)
+                        putExtra("description", weatherEntity.description)
+                        putExtra("clouds", weatherEntity.clouds)
+                        putExtra("imageWeather", weatherEntity.imageWeather)
+                        putExtra("city", weatherEntity.city)
+                    }
+                    startActivity(intent)
+                    finish()
                 } else {
                     Toast.makeText(this@MainActivity, R.string.no_offline_data_available.toString(), Toast
                         .LENGTH_SHORT).show()
@@ -552,155 +522,9 @@ class MainActivity : AppCompatActivity(), NetworkChangeReceiver.NetworkChangeLis
     }
 
 
-
-
     //**********************************************************************************************
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         NotificationPermission.handlePermissionResult(this, requestCode, grantResults)
-    }
-
-    // *********************************************************************************************
-    // Save weather data to SharedPreferences
-  /*  private fun saveWeatherDataToSharedPreferences(currentWeather: Daily, hourlyWeather: List<HourlyListElement>, dailyWeather:List<ListElement>) {
-
-        if (currentWeather == null) return
-
-        val gson = Gson()
-        val editor = sharedPreferences.edit()
-
-        // Save current weather as JSON string
-        val currentWeatherJson = gson.toJson(currentWeather)
-        editor.putString("currentWeather", currentWeatherJson)
-
-        // Save hourly weather as JSON string
-        val hourlyWeatherJson = gson.toJson(hourlyWeather)
-        editor.putString("hourlyWeather", hourlyWeatherJson)
-
-        // Save daily weather as JSON string
-        val dailyWeatherJson = gson.toJson(dailyWeather)
-        editor.putString("dailyWeather", dailyWeatherJson)
-
-        editor.apply() // Apply changes
-        Toast.makeText(this, "Data saved successfully in shared preferences", Toast.LENGTH_SHORT).show()
-    }
-
-    // Load weather data from SharedPreferences when offline
-    private fun loadWeatherDataFromSharedPreferences() {
-        val gson = Gson()
-
-        // Retrieve current weather
-        val currentWeatherJson = sharedPreferences.getString("currentWeather", null)
-        val currentWeather = if (currentWeatherJson != null) {
-            gson.fromJson(currentWeatherJson, Daily::class.java)
-        } else {
-            null
-        }
-        Log.d("local", "Current Weather: $currentWeather")
-
-        // Retrieve hourly weather
-        val hourlyWeatherJson = sharedPreferences.getString("hourlyWeather", null)
-        val hourlyWeatherList = if (hourlyWeatherJson != null) {
-            val type = object : TypeToken<List<HourlyListElement>>() {}.type
-            gson.fromJson<List<HourlyListElement>>(hourlyWeatherJson, type)
-        } else {
-            null
-        }
-        Log.d("local", "Current Weather: $hourlyWeatherList")
-
-
-        // Retrieve daily weather
-        val dailyWeatherJson = sharedPreferences.getString("dailyWeather", null)
-        val dailyWeatherList = if (dailyWeatherJson != null) {
-            val type = object : TypeToken<List<ListElement>>() {}.type
-            gson.fromJson<List<ListElement>>(dailyWeatherJson, type)
-        } else {
-            null
-        }
-        Log.d("local", "Current Weather: $dailyWeatherList")
-
-
-        // Update UI if data is available
-        if (currentWeather != null &&  dailyWeatherList != null) {
-            updateUI(currentWeather)
-            //setupHourlyForecastRecyclerView(hourlyWeatherList)
-            setupDailyForecastRecyclerView(dailyWeatherList)
-            binding.progressBar.visibility = View.GONE
-            binding.textLocation.visibility = View.GONE
-        } else {
-            Toast.makeText(this, getString(R.string.no_offline_data_available), Toast.LENGTH_SHORT).show()
-        }
-    }*/
-
-
-    // Save weather data to SharedPreferences
-    private suspend fun saveWeatherDataToSharedPreferences(currentWeather: Daily, hourlyWeather: List<HourlyListElement>, dailyWeather: List<ListElement>) {
-        if (currentWeather == null) return
-
-        withContext(Dispatchers.IO) {
-            val gson = Gson()
-            val editor = sharedPreferences.edit()
-
-            val currentWeatherJson = gson.toJson(currentWeather)
-            editor.putString("currentWeather", currentWeatherJson)
-
-            val hourlyWeatherJson = gson.toJson(hourlyWeather)
-            editor.putString("hourlyWeather", hourlyWeatherJson)
-
-            val dailyWeatherJson = gson.toJson(dailyWeather)
-            editor.putString("dailyWeather", dailyWeatherJson)
-
-            editor.apply()
-
-          /*  Log.d("save", "Current Weather: $currentWeatherJson")
-            Log.d("save", "Hourly Weather: $hourlyWeatherJson")
-            Log.d("save", "Daily Weather: $dailyWeatherJson")*/
-        }
-
-        withContext(Dispatchers.Main) {
-            //Toast.makeText(this@MainActivity, "Data saved successfully in shared preferences", Toast.LENGTH_SHORT).show()
-
-        }
-    }
-
-    private suspend fun loadWeatherDataFromSharedPreferences() {
-        withContext(Dispatchers.IO) {
-            val gson = Gson()
-
-            val currentWeatherJson = sharedPreferences.getString("currentWeather", null)
-            val currentWeather = currentWeatherJson?.let {
-                gson.fromJson(it, Daily::class.java)
-            }
-
-            val hourlyWeatherJson = sharedPreferences.getString("hourlyWeather", null)
-            val hourlyWeatherList = hourlyWeatherJson?.let {
-                val type = object : TypeToken<List<HourlyListElement>>() {}.type
-                gson.fromJson<List<HourlyListElement>>(it, type)
-            }
-
-            val dailyWeatherJson = sharedPreferences.getString("dailyWeather", null)
-            val dailyWeatherList = dailyWeatherJson?.let {
-                val type = object : TypeToken<List<ListElement>>() {}.type
-                gson.fromJson<List<ListElement>>(it, type)
-            }
-
-            withContext(Dispatchers.Main) {
-                Log.d("local", "Current Weather: $currentWeather")
-                Log.d("local", "Hourly Weather: $hourlyWeatherList")
-                Log.d("local", "Daily Weather: $dailyWeatherList")
-
-                if (currentWeather != null && dailyWeatherList != null) {
-                    updateUI(currentWeather)
-                    if (hourlyWeatherList != null) {
-                        setupHourlyForecastRecyclerView(hourlyWeatherList)
-                    }
-                    setupDailyForecastRecyclerView(dailyWeatherList)
-                    binding.progressBar.visibility = View.GONE
-                    binding.textLocation.visibility = View.GONE
-                } else {
-                    Toast.makeText(this@MainActivity, getString(R.string.no_offline_data_available), Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
     }
 }

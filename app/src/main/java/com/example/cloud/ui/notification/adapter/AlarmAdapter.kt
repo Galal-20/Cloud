@@ -10,9 +10,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.cloud.R
 import com.example.cloud.database.entity.AlarmEntity
 import com.example.cloud.utils.Settings.formatTime
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 class AlarmAdapter(
     private val onDeleteClicked: (AlarmEntity) -> Unit
