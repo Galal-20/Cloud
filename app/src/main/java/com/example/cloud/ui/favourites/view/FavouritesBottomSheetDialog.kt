@@ -1,5 +1,6 @@
 package com.example.cloud.ui.favourites.view
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -60,12 +61,7 @@ class FavoritesBottomSheetDialog(
                     openOfflineActivity(weatherEntity)
                     dismiss()
                 }, { weatherEntity ->
-                    lifecycleScope.launch {
-                        viewModel.deleteWeather(weatherEntity)
-                        adapter.removeItem(weatherEntity)
-                        onCityDeleted()
-
-                    }
+                    showDeleteConfirmationDialog(weatherEntity)
 
                 })
                 recyclerView.adapter = adapter
@@ -96,6 +92,24 @@ class FavoritesBottomSheetDialog(
             putExtra("city", weatherEntity.city)
         }
         startActivity(intent)
+    }
+
+    private fun showDeleteConfirmationDialog(weatherEntity: CurrentWeatherEntity) {
+        AlertDialog.Builder(requireContext())
+            .setMessage("Are you sure you want to delete this item?")
+            .setPositiveButton("Yes") { dialog, _ ->
+                lifecycleScope.launch {
+                    viewModel.deleteWeather(weatherEntity)
+                    adapter.removeItem(weatherEntity)
+                    onCityDeleted()
+                }
+                dialog.dismiss()
+            }
+            .setNegativeButton("No") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+            .show()
     }
 }
 

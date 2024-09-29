@@ -34,7 +34,7 @@ class WeatherNotificationWorker(
                    val currentTime = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
 
                    when (currentTime) {
-                       "08:53" ->showNotification (
+                       "05:00" ->showNotification (
                                "Good Morning.",
                        "Current Temperature: ${currentWeather.main.temp}°C",
                        R.drawable.colud_background

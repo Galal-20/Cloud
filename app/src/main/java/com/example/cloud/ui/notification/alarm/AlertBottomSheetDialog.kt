@@ -1,6 +1,7 @@
 package com.example.cloud.ui.notification.alarm
 
 import android.app.AlarmManager
+import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context
@@ -70,7 +71,7 @@ class AlertBottomSheetDialog : BottomSheetDialogFragment() {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.adapterPosition
                 val alarm = alarmAdapter.getItemAt(position)
-                deleteAlarm(alarm)
+                showDeleteConfirmationDialog(alarm)
             }
 
             override fun onDelete(alarm: AlarmEntity) {
@@ -80,6 +81,22 @@ class AlertBottomSheetDialog : BottomSheetDialogFragment() {
 
         val itemTouchHelper = ItemTouchHelper(swipeHandler)
         itemTouchHelper.attachToRecyclerView(recyclerView)
+    }
+
+    private fun showDeleteConfirmationDialog(alarm: AlarmEntity) {
+        AlertDialog.Builder(requireContext())
+            .setMessage("Are you sure you want to delete this alarm?")
+            .setPositiveButton("Yes") { dialog, _ ->
+                deleteAlarm(alarm)
+                Toast.makeText(requireContext(), "Alarm deleted", Toast.LENGTH_SHORT).show()
+                dialog.dismiss()
+            }
+            .setNegativeButton("No") { dialog, _ ->
+                dialog.dismiss()
+                alarmAdapter.notifyDataSetChanged()
+            }
+            .create()
+            .show()
     }
 
     private fun showDatePicker() {
