@@ -9,9 +9,7 @@
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
-
-
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <application
         android:allowBackup="true"
@@ -23,18 +21,19 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Cloud"
         tools:targetApi="31">
+        <activity
+            android:name=".ui.offline.OfflineActivity"
+            android:exported="false" />
 
         <receiver android:name=".ui.notification.pushNotification.NotificationDismissReceiver" />
 
-        <service android:name=".ui.notification.alarm.AlarmService"
+        <service
+            android:name=".ui.notification.alarm.AlarmService"
             android:enabled="true"
-            android:exported="false"/>
+            android:exported="false" />
 
         <receiver android:name=".ui.notification.alarm.AlarmReceiver" />
         <receiver android:name=".ui.notification.alarm.DismissAlarmReceiver" />
-
-
-
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

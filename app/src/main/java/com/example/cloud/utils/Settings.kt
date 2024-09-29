@@ -79,6 +79,9 @@ object Settings{
     }
 
 
+     fun formatTime(timeInMillis: Long): String {
+        return SimpleDateFormat("hh:mm a, MMM dd yyyy", Locale.getDefault()).format(Date(timeInMillis))
+    }
 
 
 

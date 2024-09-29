@@ -1,7 +1,6 @@
 package com.example.cloud.ui.main.adapter
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.cloud.R
 import com.example.cloud.model.ListElement
+import com.example.cloud.utils.PreferencesUtils
 import com.example.cloud.utils.Settings.convertTemperature
 import com.example.cloud.utils.Settings.getUnitSymbol
 import java.text.SimpleDateFormat
@@ -43,8 +43,8 @@ class DaysAdapter : ListAdapter<ListElement, DaysAdapter.DayViewHolder>(DiffCall
 
         @SuppressLint("DefaultLocale")
         fun bind(dailyData: ListElement) {
-            val unit = itemView.context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
-                .getString("temperature_unit", R.string.celsius.toString()) ?: R.string.celsius.toString()
+
+            val unit = PreferencesUtils.getPreferences(itemView.context).getString("temperature_unit", R.string.celsius.toString()) ?: R.string.celsius.toString()
             val animation = AnimationUtils.loadAnimation(itemView.context, R.anim.scale_in_animation)
             itemView.startAnimation(animation)
 
@@ -53,7 +53,7 @@ class DaysAdapter : ListAdapter<ListElement, DaysAdapter.DayViewHolder>(DiffCall
             dayTextView.text = dateFormat.format(date)
 
             val weatherCondition = dailyData.weather.firstOrNull()
-            weatherDescriptionTextView.text = weatherCondition?.main ?: R.string.Unknown.toString()
+            weatherDescriptionTextView.text = weatherCondition?.description ?: R.string.Unknown.toString()
 
             val iconUrl = "https://openweathermap.org/img/wn/${weatherCondition?.icon}@2x.png"
             Glide.with(itemView.context)

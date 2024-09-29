@@ -1,5 +1,6 @@
 package com.example.cloud.ui.favourites.view
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,6 +18,7 @@ import com.example.cloud.repository.local.Fav.WeatherFavRepositoryImp
 import com.example.cloud.ui.favourites.adapter.FavoriteCitiesAdapter
 import com.example.cloud.ui.favourites.viewModel.FavViewModel
 import com.example.cloud.ui.favourites.viewModel.FavViewModelFactory
+import com.example.cloud.ui.offline.OfflineActivity
 import com.example.cloud.utils.PreferencesUtils
 import com.example.cloud.utils.showUserGuide.showSwipeGuide
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -24,19 +26,18 @@ import kotlinx.coroutines.launch
 
 class FavoritesBottomSheetDialog(
     private val appDatabase: AppDatabase,
-    private val onCitySelected: (CurrentWeatherEntity) -> Unit
+    private val onCityDeleted: () -> Unit
+
 ) : BottomSheetDialogFragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: FavoriteCitiesAdapter
     lateinit var title: TextView
 
-    // Create repository instance using WeatherDao
     private val repository by lazy { WeatherFavRepositoryImp(appDatabase.weatherDao()) }
 
-    // Initialize ViewModel using factory and repository
     private val viewModel: FavViewModel by viewModels {
-        FavViewModelFactory(repository) // Pass the repository here
+        FavViewModelFactory(repository)
     }
 
     override fun onCreateView(
@@ -56,12 +57,14 @@ class FavoritesBottomSheetDialog(
         lifecycleScope.launch {
             viewModel.allWeatherData.collect { favoriteCitiesList ->
                 adapter = FavoriteCitiesAdapter(favoriteCitiesList.toMutableList(), { weatherEntity ->
-                    onCitySelected(weatherEntity)
+                    openOfflineActivity(weatherEntity)
                     dismiss()
                 }, { weatherEntity ->
                     lifecycleScope.launch {
                         viewModel.deleteWeather(weatherEntity)
                         adapter.removeItem(weatherEntity)
+                        onCityDeleted()
+
                     }
 
                 })
@@ -77,4 +80,22 @@ class FavoritesBottomSheetDialog(
             }
         }
     }
+    private fun openOfflineActivity(weatherEntity: CurrentWeatherEntity) {
+        val intent = Intent(requireContext(), OfflineActivity::class.java).apply {
+            putExtra("temperature", weatherEntity.temperature)
+            putExtra("temperatureMax", weatherEntity.temperatureMax)
+            putExtra("temperatureMin", weatherEntity.temperatureMin)
+            putExtra("humidity", weatherEntity.humidity)
+            putExtra("windSpeed", weatherEntity.windSpeed)
+            putExtra("seaPressure", weatherEntity.seaPressure)
+            putExtra("sunrise", weatherEntity.sunrise)
+            putExtra("sunset", weatherEntity.sunset)
+            putExtra("description", weatherEntity.description)
+            putExtra("clouds", weatherEntity.clouds)
+            putExtra("imageWeather", weatherEntity.imageWeather)
+            putExtra("city", weatherEntity.city)
+        }
+        startActivity(intent)
+    }
 }
+

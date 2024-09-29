@@ -34,4 +34,10 @@ class AlarmViewModel(private val alarmRepository: AlarmRepository) : ViewModel()
             alarmRepository.deleteAlarm(alarm)
         }
     }
+
+
+
 }
+
+
+

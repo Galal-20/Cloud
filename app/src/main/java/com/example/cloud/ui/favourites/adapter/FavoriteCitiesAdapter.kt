@@ -29,6 +29,7 @@ class FavoriteCitiesAdapter(
             deleteItem.setOnClickListener {
                 onDeleteClicked(weatherEntity)
             }
+            deleteItem.visibility = View.INVISIBLE
         }
     }
 

@@ -57,6 +57,8 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.junit.ktx)
+    implementation(libs.androidx.lifecycle.service)
     testImplementation(libs.junit)
     testImplementation(libs.junit.junit)
     testImplementation(libs.junit.junit)
@@ -131,6 +133,18 @@ dependencies {
     testImplementation("org.mockito:mockito-inline:4.6.1")
     testImplementation("androidx.test:core:1.4.0")
     testImplementation("org.robolectric:robolectric:4.10")
+
+    // InstantTaskExecutorRule
+    testImplementation ("androidx.arch.core:core-testing:2.1.0")
+    androidTestImplementation ("androidx.arch.core:core-testing:2.1.0")
+
+    testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+
+    //testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+
+
+
+
 
 
 

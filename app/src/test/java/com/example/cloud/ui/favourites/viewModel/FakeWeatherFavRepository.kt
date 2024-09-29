@@ -1,12 +1,11 @@
-package com.example.cloud.repository.local.Fav
+package com.example.cloud.ui.favourites.viewModel
 
-
-import com.example.cloud.database.entity.CurrentWeatherEntity
 import com.example.cloud.database.dao.WeatherDao
+import com.example.cloud.database.entity.CurrentWeatherEntity
+import com.example.cloud.repository.local.Fav.WeatherFavRepositoryInterface
 import kotlinx.coroutines.flow.Flow
 
-class WeatherFavRepositoryImp(private val weatherDao: WeatherDao): WeatherFavRepositoryInterface {
-
+class FakeWeatherFavRepository(private val weatherDao: WeatherDao): WeatherFavRepositoryInterface {
     override suspend fun insertWeather(weather: CurrentWeatherEntity) {
         weatherDao.insertWeather(weather)
     }
@@ -26,7 +25,4 @@ class WeatherFavRepositoryImp(private val weatherDao: WeatherDao): WeatherFavRep
     override suspend fun getWeatherByCity(city: String): CurrentWeatherEntity? {
         return weatherDao.getWeatherByCity(city)
     }
-
 }
-
-

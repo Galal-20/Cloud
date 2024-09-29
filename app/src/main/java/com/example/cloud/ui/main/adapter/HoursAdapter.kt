@@ -1,7 +1,6 @@
 package com.example.cloud.ui.main.adapter
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
@@ -12,6 +11,7 @@ import com.bumptech.glide.Glide
 import com.example.cloud.R
 import com.example.cloud.databinding.HoursItemBinding
 import com.example.cloud.model.HourlyListElement
+import com.example.cloud.utils.PreferencesUtils
 import com.example.cloud.utils.Settings.convertTemperature
 import com.example.cloud.utils.Settings.getUnitSymbol
 import java.text.SimpleDateFormat
@@ -24,8 +24,7 @@ class HoursAdapter : ListAdapter<HourlyListElement, HoursAdapter.HourlyWeatherVi
     inner class HourlyWeatherViewHolder(private val binding: HoursItemBinding) : RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("DefaultLocale")
         fun bind(hourlyWeather: HourlyListElement) {
-            val unit = binding.root.context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
-                .getString("temperature_unit", R.string.celsius.toString()) ?: R.string.celsius.toString()
+            val unit = PreferencesUtils.getPreferences(itemView.context).getString("temperature_unit", R.string.celsius.toString()) ?: R.string.celsius.toString()
 
             val animation = AnimationUtils.loadAnimation(itemView.context, R.anim.scale_in_animation)
             itemView.startAnimation(animation)

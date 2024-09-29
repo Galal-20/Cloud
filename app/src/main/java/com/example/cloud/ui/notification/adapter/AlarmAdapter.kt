@@ -9,9 +9,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.cloud.R
 import com.example.cloud.database.entity.AlarmEntity
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import com.example.cloud.utils.Settings.formatTime
 
 class AlarmAdapter(
     private val onDeleteClicked: (AlarmEntity) -> Unit
@@ -35,14 +33,8 @@ class AlarmAdapter(
     inner class AlarmViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(alarm: AlarmEntity) {
             itemView.findViewById<TextView>(R.id.date_time_alarm).text = formatTime(alarm.timeInMillis)
-            // Other view bindings
         }
 
-        private fun formatTime(timeInMillis: Long): String {
-            // Format time as needed
-            return SimpleDateFormat("hh:mm a, MMM dd yyyy", Locale.getDefault()).format(Date(timeInMillis))
-            // Replace with actual formatting logic
-        }
     }
 
     class AlarmDiffCallback : DiffUtil.ItemCallback<AlarmEntity>() {

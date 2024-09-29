@@ -13,7 +13,8 @@ interface ApiInterface {
         @Query("lat") lat: Double,
         @Query("lon") lon: Double,
         @Query("appid") appid: String,
-        @Query("units") units: String
+        @Query("units") units: String,
+        @Query("lang") lang: String ,
     ): Response<Daily>
 
 
@@ -23,6 +24,7 @@ interface ApiInterface {
         @Query("lon") lon: Double,
         @Query("appid") appid: String,
         @Query("units") units: String
+
     ): Response<Hourly>
 
     @GET("forecast/daily")
@@ -31,43 +33,11 @@ interface ApiInterface {
         @Query("lon") lon: Double,
         @Query("cnt") count: Int,
         @Query("appid") appid: String,
-        @Query("units") units: String
+        @Query("units") units: String,
+        @Query("lang") lang: String,
     ): Response<Daily>
 
 
 }
-
-
-
-/* @GET("weather")
-   suspend fun getWeatherDate(
-       @Query("q") city: String,
-       @Query("appId") appId: String,
-       @Query("units") units: String,
-   ): Response<Daily>
-
-
-
-   @GET("forecast/hourly")
-   suspend fun getHourlyForecast(
-       @Query("q") city: String,
-       @Query("appid") appid: String,
-       @Query("units") units: String
-   ): Response<Hourly>
-
-
-   @GET("forecast/daily")
-   suspend fun getDailyForecast(
-       @Query("q") city: String,
-       @Query("cnt") count: Int,
-       @Query("appid") appid: String,
-       @Query("units") units: String
-   ): Response<Daily>*/
-
-
-
-
-
-
 
 
