@@ -9,7 +9,7 @@ import com.example.cloud.database.dao.WeatherDao
 import com.example.cloud.database.entity.CurrentWeatherEntity
 import com.example.cloud.repository.local.Fav.WeatherFavRepositoryImp
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.*
 import org.junit.runner.RunWith
@@ -35,7 +35,7 @@ class FavViewModelTest {
         //ApplicationProvider: Provides the application context for use in tests.
         db = Room.inMemoryDatabaseBuilder(ApplicationProvider.getApplicationContext(), AppDatabase::class.java).allowMainThreadQueries().build()
         weatherDao = db.weatherDao()
-        val repository = WeatherFavRepositoryImp(weatherDao)
+        val repository = FakeWeatherFavRepository(weatherDao)
         viewModel = FavViewModel(repository)
     }
 
@@ -66,7 +66,8 @@ class FavViewModelTest {
             day = "",
             id = 10,
             lottieAnimation = "",
-            imageWeather = ""
+            imageWeather = "",
+            description = ""
         )
         weatherDao.insertWeather(weatherEntity)
 
@@ -101,7 +102,9 @@ class FavViewModelTest {
             day = "",
             id = 10,
             lottieAnimation = "",
-            imageWeather = ""
+            imageWeather = "",
+            description = ""
+
         )
         weatherDao.insertWeather(weatherEntity)
 
@@ -136,7 +139,9 @@ class FavViewModelTest {
             day = "",
             id = 10,
             lottieAnimation = "",
-            imageWeather = ""
+            imageWeather = "",
+            description = ""
+
         )
         weatherDao.insertWeather(weatherEntity1)
 
@@ -160,7 +165,9 @@ class FavViewModelTest {
             day = "",
             id = 10,
             lottieAnimation = "",
-            imageWeather = ""
+            imageWeather = "",
+            description = ""
+
         )
         weatherDao.insertWeather(weatherEntity2)
 
@@ -171,6 +178,117 @@ class FavViewModelTest {
         Assert.assertNotNull(firstWeatherItem)
         Assert.assertEquals("Los Angeles", firstWeatherItem?.city)
     }
+
+    @Test
+    fun testInsertOrUpdateWeather_insertNewWeather() = runTest {
+        val weatherEntity = CurrentWeatherEntity(
+            lat = 40.7128,
+            lon = -74.0060,
+            city = "New York",
+            temperature = 25.0,
+            temperatureMin = 20.0,
+            temperatureMax = 30.0,
+            main = "Cloudy",
+            windSpeed = 5.0,
+            seaPressure = 1013,
+            humidity = 60,
+            sunset = 1600000000L,
+            sunrise = 1599990000L,
+            timestamp = System.currentTimeMillis(),
+            clouds = 40,
+            icon = "",
+            date = 1000,
+            day = "",
+            id = 10,
+            lottieAnimation = "",
+            imageWeather = "",
+            description = ""
+
+        )
+
+        // Insert new weather data (city not present in the database)
+        viewModel.insertOrUpdateWeather(weatherEntity)
+
+        // Ensure all coroutines have finished
+        advanceUntilIdle() // Wait until the coroutine completes
+
+        // Verify that the data was inserted
+        val allWeatherData = viewModel.allWeatherData.first()
+        Assert.assertEquals(1, allWeatherData.size)
+        Assert.assertEquals("New York", allWeatherData[0].city)
+        Assert.assertEquals(25.0, allWeatherData[0].temperature, 0.0)
+
+}
+
+    @Test
+    fun testInsertOrUpdateWeather_updateExistingWeather() = runTest {
+        val oldWeatherEntity = CurrentWeatherEntity(
+            lat = 40.7128,
+            lon = -74.0060,
+            city = "New York",
+            temperature = 20.0,
+            temperatureMin = 15.0,
+            temperatureMax = 25.0,
+            main = "Clear",
+            windSpeed = 3.0,
+            seaPressure = 1010,
+            humidity = 50,
+            sunset = 1600000000L,
+            sunrise = 1599990000L,
+            timestamp = System.currentTimeMillis(),
+            clouds = 10,
+            icon = "",
+            date = 1000,
+            day = "",
+            id = 10,
+            lottieAnimation = "",
+            imageWeather = "",
+            description = ""
+
+        )
+
+        val newWeatherEntity = CurrentWeatherEntity(
+            lat = 40.7128,
+            lon = -74.0060,
+            city = "New York",
+            temperature = 25.0,
+            temperatureMin = 20.0,
+            temperatureMax = 30.0,
+            main = "Cloudy",
+            windSpeed = 5.0,
+            seaPressure = 1013,
+            humidity = 60,
+            sunset = 1600000000L,
+            sunrise = 1599990000L,
+            timestamp = System.currentTimeMillis(),
+            clouds = 40,
+            icon = "",
+            date = 1000,
+            day = "",
+            id = 10,
+            lottieAnimation = "",
+            imageWeather = "",
+            description = ""
+
+        )
+
+        // Insert old weather data
+        weatherDao.insertWeather(oldWeatherEntity)
+
+        // Insert new weather data for the same city (should update)
+        viewModel.insertOrUpdateWeather(newWeatherEntity)
+
+        advanceUntilIdle() // Ensure the coroutine completes before assertions
+
+
+        // Verify that the old data was deleted and new data was inserted
+        val allWeatherData = viewModel.allWeatherData.first()
+        Assert.assertEquals(1, allWeatherData.size)
+        Assert.assertEquals("New York", allWeatherData[0].city)
+        Assert.assertEquals(25.0, allWeatherData[0].temperature, 0.0)
+        Assert.assertEquals("Cloudy", allWeatherData[0].main)
+    }
+
 }
 /*By using an in-memory database, the test environment remains lightweight and does not persist any data beyond the test lifecycle.*/
 /*These tests insert data, retrieve it through the ViewModel, delete it, and check the operations. You can run these tests in Android Studio using the built-in test runner.*/

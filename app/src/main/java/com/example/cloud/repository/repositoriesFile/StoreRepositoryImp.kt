@@ -8,17 +8,21 @@ import com.example.cloud.database.entity.AlarmEntity
 import com.example.cloud.database.entity.CurrentWeatherEntity
 import com.example.cloud.model.Daily
 import com.example.cloud.model.Hourly
+import com.example.cloud.repository.local.Alarm.AlarmRepository
 import com.example.cloud.repository.local.Alarm.AlarmRepositoryImpl
 import com.example.cloud.repository.local.Fav.WeatherFavRepositoryImp
+import com.example.cloud.repository.local.Fav.WeatherFavRepositoryInterface
 import com.example.cloud.repository.remote.WeatherRepositoryImpl
+import com.example.cloud.repository.remote.WeatherRepositoryInterface
 import kotlinx.coroutines.flow.Flow
 
-class StoreRepositoryImp (context: Context, alarmDao: AlarmDao, weatherDao: WeatherDao, alarmManager: AlarmManager) : StoreRepository {
+class StoreRepositoryImp (
+    private val weatherFavRepositoryInterface: WeatherFavRepositoryInterface,
+    private val alarmRepository: AlarmRepository,
+    private val weatherRemoteRepository: WeatherRepositoryInterface
+) : StoreRepository {
 
-    // Repositories
-    private val alarmRepository = AlarmRepositoryImpl(context, alarmDao, alarmManager)
-    private val weatherFavRepository = WeatherFavRepositoryImp(weatherDao)
-    private val weatherRemoteRepository = WeatherRepositoryImpl()
+
 
     // Alarm methods
     override suspend fun setAlarm(timeInMillis: Long, alarmId: Int) {
@@ -35,19 +39,19 @@ class StoreRepositoryImp (context: Context, alarmDao: AlarmDao, weatherDao: Weat
 
     // Local Weather (Favorites) methods
     override suspend fun insertWeather(weather: CurrentWeatherEntity) {
-        weatherFavRepository.insertWeather(weather)
+        weatherFavRepositoryInterface.insertWeather(weather)
     }
 
     override fun getAllWeatherData(): Flow<List<CurrentWeatherEntity>> {
-        return weatherFavRepository.getAllWeatherData()
+        return weatherFavRepositoryInterface.getAllWeatherData()
     }
 
     override suspend fun getFirstWeatherItem(): CurrentWeatherEntity? {
-        return weatherFavRepository.getFirstWeatherItem()
+        return weatherFavRepositoryInterface.getFirstWeatherItem()
     }
 
     override suspend fun deleteWeather(weather: CurrentWeatherEntity) {
-        weatherFavRepository.deleteWeather(weather)
+        weatherFavRepositoryInterface.deleteWeather(weather)
     }
 
     // Remote Weather methods

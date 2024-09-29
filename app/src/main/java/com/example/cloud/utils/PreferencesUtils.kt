@@ -10,7 +10,6 @@ object PreferencesUtils {
     private const val KEY_LANGUAGE = "language"
     private const val KEY_TEMPERATURE_UNIT = "temperature_unit"
     private const val KEY_WIND_SPEED_UNIT = "wind_speed_unit"
-
     private const val KEY_NOTIFICATIONS_ENABLED = "notifications_enabled"
 
 

@@ -54,7 +54,7 @@ class DaysAdapter : ListAdapter<ListElement, DaysAdapter.DayViewHolder>(DiffCall
             dayTextView.text = dateFormat.format(date)
 
             val weatherCondition = dailyData.weather.firstOrNull()
-            weatherDescriptionTextView.text = weatherCondition?.main ?: R.string.Unknown.toString()
+            weatherDescriptionTextView.text = weatherCondition?.description ?: R.string.Unknown.toString()
 
             val iconUrl = "https://openweathermap.org/img/wn/${weatherCondition?.icon}@2x.png"
             Glide.with(itemView.context)

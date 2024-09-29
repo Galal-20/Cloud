@@ -72,7 +72,9 @@ import java.util.Locale
 class MainActivity : AppCompatActivity(), NetworkChangeReceiver.NetworkChangeListener {
 
     private val binding:ActivityMainBinding by lazy { ActivityMainBinding.inflate(layoutInflater) }
-    private val weatherViewModel: WeatherViewModel by viewModels { WeatherViewModelFactory(WeatherRepositoryImpl()) }
+    private val weatherViewModel: WeatherViewModel by viewModels {
+        WeatherViewModelFactory(WeatherRepositoryImpl(this))
+    }
     private val favViewModel: FavViewModel by viewModels {
         FavViewModelFactory(WeatherFavRepositoryImp(AppDatabase.getDatabase(this).weatherDao()))
     }
@@ -177,7 +179,12 @@ class MainActivity : AppCompatActivity(), NetworkChangeReceiver.NetworkChangeLis
             Log.d("MainActivity", "Internet is not available. Showing offline data.")
             //loadOfflineData()
             lifecycleScope.launch {
-                loadWeatherDataFromSharedPreferences()
+                //loadWeatherDataFromSharedPreferences()
+                if (favViewModel.getFirstWeatherItem()==null){
+                    loadWeatherDataFromSharedPreferences()
+                }else {
+                    loadOfflineData()
+                }
             }
         }
     }
@@ -392,7 +399,8 @@ class MainActivity : AppCompatActivity(), NetworkChangeReceiver.NetworkChangeLis
         pressureValue = weather.main.pressure
         binding.sea.text = "$pressureValue $pascalUnit"
         val weatherCondition = weather.weather.firstOrNull()
-        binding.today.text = weatherCondition?.main ?: R.string.Unknown.toString()
+        binding.today.text = weatherCondition?.description ?: R.string.Unknown.toString()
+        Log.d("lang", "Weather Condition: ${weatherCondition?.description}")
         binding.condition.text = weather.clouds.all.toString() + getString(R.string.percentage)
         binding.day.text = dayName()
         binding.date.text = date()
@@ -496,7 +504,7 @@ class MainActivity : AppCompatActivity(), NetworkChangeReceiver.NetworkChangeLis
         pascalUnit = binding.root.context.getString(R.string.pascal)
         pressureValue = weatherEntity.seaPressure
         binding.sea.text = "$pressureValue $pascalUnit"
-        binding.today.text = weatherEntity.main
+        binding.today.text = weatherEntity.description
         binding.condition.text = weatherEntity.clouds.toString() + getString(R.string.percentage)
         changeImageWeatherS(weatherEntity.imageWeather)
         binding.textLocation.text = weatherEntity.city
@@ -627,76 +635,65 @@ class MainActivity : AppCompatActivity(), NetworkChangeReceiver.NetworkChangeLis
 
     // Save weather data to SharedPreferences
     private suspend fun saveWeatherDataToSharedPreferences(currentWeather: Daily, hourlyWeather: List<HourlyListElement>, dailyWeather: List<ListElement>) {
-        // Ensure currentWeather is not null
         if (currentWeather == null) return
 
-        withContext(Dispatchers.IO) { // Switch to IO context for saving data
+        withContext(Dispatchers.IO) {
             val gson = Gson()
             val editor = sharedPreferences.edit()
 
-            // Save current weather as JSON string
             val currentWeatherJson = gson.toJson(currentWeather)
             editor.putString("currentWeather", currentWeatherJson)
 
-            // Save hourly weather as JSON string
             val hourlyWeatherJson = gson.toJson(hourlyWeather)
             editor.putString("hourlyWeather", hourlyWeatherJson)
 
-            // Save daily weather as JSON string
             val dailyWeatherJson = gson.toJson(dailyWeather)
             editor.putString("dailyWeather", dailyWeatherJson)
 
-            editor.apply() // Apply changes
+            editor.apply()
 
           /*  Log.d("save", "Current Weather: $currentWeatherJson")
             Log.d("save", "Hourly Weather: $hourlyWeatherJson")
             Log.d("save", "Daily Weather: $dailyWeatherJson")*/
         }
 
-        // Show toast in Main thread after saving
         withContext(Dispatchers.Main) {
-            Toast.makeText(this@MainActivity, "Data saved successfully in shared preferences", Toast.LENGTH_SHORT).show()
+            //Toast.makeText(this@MainActivity, "Data saved successfully in shared preferences", Toast.LENGTH_SHORT).show()
 
         }
     }
 
-    // Load weather data from SharedPreferences when offline
     private suspend fun loadWeatherDataFromSharedPreferences() {
-        withContext(Dispatchers.IO) { // Switch to IO context for loading data
+        withContext(Dispatchers.IO) {
             val gson = Gson()
 
-            // Retrieve current weather
             val currentWeatherJson = sharedPreferences.getString("currentWeather", null)
             val currentWeather = currentWeatherJson?.let {
                 gson.fromJson(it, Daily::class.java)
             }
 
-            // Retrieve hourly weather
             val hourlyWeatherJson = sharedPreferences.getString("hourlyWeather", null)
             val hourlyWeatherList = hourlyWeatherJson?.let {
                 val type = object : TypeToken<List<HourlyListElement>>() {}.type
                 gson.fromJson<List<HourlyListElement>>(it, type)
             }
 
-            // Retrieve daily weather
             val dailyWeatherJson = sharedPreferences.getString("dailyWeather", null)
             val dailyWeatherList = dailyWeatherJson?.let {
                 val type = object : TypeToken<List<ListElement>>() {}.type
                 gson.fromJson<List<ListElement>>(it, type)
             }
 
-            // Update UI on the main thread
             withContext(Dispatchers.Main) {
                 Log.d("local", "Current Weather: $currentWeather")
                 Log.d("local", "Hourly Weather: $hourlyWeatherList")
                 Log.d("local", "Daily Weather: $dailyWeatherList")
 
-                // Update UI if data is available
                 if (currentWeather != null && dailyWeatherList != null) {
                     updateUI(currentWeather)
                     if (hourlyWeatherList != null) {
                         setupHourlyForecastRecyclerView(hourlyWeatherList)
-                    } // Uncomment if needed
+                    }
                     setupDailyForecastRecyclerView(dailyWeatherList)
                     binding.progressBar.visibility = View.GONE
                     binding.textLocation.visibility = View.GONE

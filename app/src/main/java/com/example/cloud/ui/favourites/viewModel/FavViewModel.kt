@@ -26,10 +26,13 @@ class FavViewModel(private val repository: WeatherFavRepositoryInterface) : View
     suspend fun insertOrUpdateWeather(weather: CurrentWeatherEntity) {
         val existingWeather = repository.getWeatherByCity(weather.city)
         viewModelScope.launch {
-            if (existingWeather != null) { repository.deleteWeather(existingWeather) }
+            if (existingWeather != null) {
+                repository.deleteWeather(existingWeather)
+            }
             repository.insertWeather(weather)
         }
     }
 
 
 }
+

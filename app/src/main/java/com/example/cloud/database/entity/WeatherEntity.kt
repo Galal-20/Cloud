@@ -9,7 +9,8 @@ data class CurrentWeatherEntity(
     val city: String,
     val day: String,
     val temperature: Double,
-    val main: String?,
+    val description: String,
+    val main: String,
     val icon: String,
     val date: Long,
     val temperatureMin: Double,
@@ -23,7 +24,7 @@ data class CurrentWeatherEntity(
     val sunrise: Long,
     val humidity: Int,
     val lottieAnimation: String,
-    val imageWeather: String, // Added this field
+    val imageWeather: String,
     val clouds: Int
 )
 

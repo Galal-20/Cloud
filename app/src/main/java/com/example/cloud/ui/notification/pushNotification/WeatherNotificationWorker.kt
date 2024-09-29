@@ -73,7 +73,7 @@ class WeatherNotificationWorker(
 
        return withContext(Dispatchers.IO) {
            try {
-               val weatherRepository = WeatherRepositoryImpl()
+               val weatherRepository = WeatherRepositoryImpl(context)
 
                // Collecting the Flow from the repository
                weatherRepository.getWeatherDataForNotification(lat, lon).collect { weatherData ->
