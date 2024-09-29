@@ -2,6 +2,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -13,7 +22,26 @@
         android:theme="@style/Theme.Cloud"
         tools:targetApi="31">
         <activity
-            android:name=".Ui.MainActivity"
+            android:name=".ui.offline.OfflineActivity"
+            android:exported="false" />
+
+        <receiver android:name=".ui.notification.pushNotification.NotificationDismissReceiver" />
+
+        <service
+            android:name=".ui.notification.alarm.AlarmService"
+            android:enabled="true"
+            android:exported="false" />
+
+        <receiver android:name=".ui.notification.alarm.AlarmReceiver" />
+        <receiver android:name=".ui.notification.alarm.DismissAlarmReceiver" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
+
+        <activity android:name=".ui.map.MapActivity" />
+        <activity
+            android:name=".ui.splash.Splash"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,6 +49,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ui.main.view.MainActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

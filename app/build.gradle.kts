@@ -3,6 +3,9 @@ import org.jetbrains.kotlin.gradle.model.Kapt
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    id("kotlin-kapt")
+
+
 }
 
 android {
@@ -17,6 +20,10 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        /*buildConfigField("String", "API_KEY", "6a482dc37ff81d4d3deec39521543316")
+        buildConfigField("String", "UNITS", "metric")*/
+
+
     }
 
     buildTypes {
@@ -35,6 +42,12 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    buildFeatures{
+        viewBinding = true
+        buildConfig = true
+
+
+    }
 }
 
 dependencies {
@@ -44,13 +57,19 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.junit.ktx)
+    implementation(libs.androidx.lifecycle.service)
     testImplementation(libs.junit)
+    testImplementation(libs.junit.junit)
+    testImplementation(libs.junit.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
-    //Room
-    implementation (libs.androidx.room.ktx)
-    implementation (libs.androidx.room.runtime)
+
+    // Room dependencies
+    implementation("androidx.room:room-runtime:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
+    kapt("androidx.room:room-compiler:2.6.1")
 
     //Retrofit
     implementation (libs.retrofit)
@@ -68,6 +87,7 @@ dependencies {
 
     //glide
     implementation (libs.glide)
+    annotationProcessor(libs.compiler)
 
 
     implementation (libs.androidx.navigation.fragment)
@@ -88,9 +108,44 @@ dependencies {
 
 
 
+    implementation(libs.play.services.maps.v1810)
 
     //Timber
-    implementation (libs.timber)
+    //implementation (libs.timber)
+
+    implementation ("com.airbnb.android:lottie:6.1.0")
+
+    implementation (libs.airlocation)
+    implementation("com.daimajia.androidanimations:library:2.4@aar")
+
+    // ViewModel and LiveData
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.4")
+    implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.8.4")
+
+    implementation("androidx.activity:activity-ktx:1.7.2") // Use the latest version available
+
+    implementation("androidx.work:work-runtime-ktx:2.8.1")
+
+    implementation(libs.taptargetview)
+
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.mockito:mockito-core:4.6.1")
+    testImplementation("org.mockito:mockito-inline:4.6.1")
+    testImplementation("androidx.test:core:1.4.0")
+    testImplementation("org.robolectric:robolectric:4.10")
+
+    // InstantTaskExecutorRule
+    testImplementation ("androidx.arch.core:core-testing:2.1.0")
+    androidTestImplementation ("androidx.arch.core:core-testing:2.1.0")
+
+    testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+
+    //testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+
+
+
+
+
 
 
 

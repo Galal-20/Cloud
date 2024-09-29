@@ -1,3 +1,91 @@
 <resources>
     <string name="app_name">Cloud</string>
+    <string name="hope_you_a_nice_weather">Hope you a nice weather</string>
+    <string name="cairo_egypt">Cairo, Egypt</string>
+    <string name="today">Today</string>
+    <string name="temp">00:00 °C</string>
+    <string name="sunny">Sunny</string>
+    <string name="date">29 July 2023</string>
+    <string name="day">Sunday</string>
+    <string name="mini">00:00/</string>
+    <string name="max">00:00°C</string>
+
+    <string name="sunset">Sunset</string>
+    <string name="_00_00">00:00</string>
+    <string name="sunrise">Sunrise</string>
+    <string name="wind">Wind Speed</string>
+    <string name="ooms">00:00 m/s</string>
+    <string name="condition">Cloud</string>
+    <string name="sea">Sea</string>
+    <string name="_0000_hpa">0000 hpa</string>
+    <string name="humidity">Humidity</string>
+    <string name="_00">00 %</string>
+    <string name="percentage"> %</string>
+    <string name="maxT">Max</string>
+    <string name="miniT">Mini</string>
+    <string name="time">00:00 AM</string>
+    <string name="settings">Settings</string>
+    <string name="temperature_unit">Temperature Unit</string>
+    <string name="celsius">Celsius</string>
+    <string name="fahrenheit">Fahrenheit</string>
+    <string name="kelvin">Kelvin</string>
+    <string name="wind_unit">Wind Unit</string>
+    <string name="meter_second">Meter/Second</string>
+    <string name="miles_hour">Miles/Hour</string>
+    <string name="choose_language">Choose language</string>
+    <string name="arabic">Arabic</string>
+    <string name="english">English</string>
+    <string name="choose_location">Choose Location</string>
+    <string name="favorite_cities">Favorite Cities</string>
+    <string name="Location_Unknown">Location Unknown</string>
+    <string name="location_text">Please enable location permissions from settings to proceed</string>
+    <string name="check_location">Check your location permission</string>
+    <string name="data_fetch">Data already fetched</string>
+    <string name="Unknown">Unknown</string>
+    <string name="Unable">Unable to fetch city name. Please check your connection.</string>
+    <string name="Invalid">Invalid location data.</string>
+    <string name="Not_Internet">Internet is not available</string>
+    <string name="image">Image</string>
+    <string name="select_location">Please select a location on the map.</string>
+    <string name="add_to_favorites_title">Add to favorites</string>
+    <string name="add_to_favorites_desc">Save your favorite weather.</string>
+    <string name="notifications_title">Notifications</string>
+    <string name="notifications_desc">View recent notifications.\nSet alarm notifications.\nDelete alarm notifications using the swipe left gesture.</string>
+
+    <string name="settings_title">Settings</string>
+    <string name="settings_desc">Convert temperature units, wind speed units, and change language.</string>
+
+    <string name="open_favorites_title">Open weather Favorites</string>
+    <string name="open_favorites_desc">Show your saved favorite weather.</string>
+
+    <string name="hourly_forecast_title">Hourly Forecast</string>
+    <string name="hourly_forecast_desc">Show hourly weather forecast.</string>
+
+    <string name="daily_forecast_title">Daily Forecast</string>
+    <string name="daily_forecast_desc">Show daily weather forecast.</string>
+    <string name="swipe_guide_title">Swipe to Delete</string>
+    <string name="swipe_guide_desc">Swipe left on a city to delete it from your favorites.</string>
+    <string name="google_maps_key">AIzaSyCAAF_jxsAmyx5ykc-7pqcvZGmMY9RtVQo</string>
+    <string name="unknown">Unknown</string>
+    <string name="no_offline_data_available">No offline data available.</string>
+    <string name="pascal">hpa</string>
+    <string name="alarm">Alarm</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="date_time">5:30 PM Tue,Sep 17</string>
+    <string name="alarm_center">Alarm center</string>
+    <string name="notification_permission">Notification Permission</string>
+    <string name="open_notification">Open Notification</string>
+    <string name="close_notification">Close Notification</string>
+    <string name="alarm_permission">Alarm Permission</string>
+    <string name="close_alarm">Close Alarm</string>
+    <string name="open_alarm">Open Alarm</string>
+    <string name="granted">Notification permission granted</string>
+    <string name="denied">Notification permission denied</string>
+    <string name="already">Notifications are already enabled</string>
+    <string name="version">Notifications are enabled by default for this version</string>
+    <string name="weather_saved">Weather data saved to favorites</string>
+    <string name="failed">Failed to save weather data</string>
+    <string name="failed_to_retriev">Failed to retrieve weather data</string>
+
+
 </resources>

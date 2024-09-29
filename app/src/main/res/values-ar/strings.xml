@@ -1,0 +1,92 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">السحاب</string>
+    <string name="hope_you_a_nice_weather">نتمنى لك طقسًا لطيفًا</string>
+    <string name="cairo_egypt">القاهرة، مصر</string>
+    <string name="today">اليوم</string>
+    <string name="temp">00:00 °م</string>
+    <string name="sunny">مشمس</string>
+    <string name="date">29 يوليو 2023</string>
+    <string name="day">الأحد</string>
+    <string name="mini">00:00/</string>
+    <string name="max">00:00 °م</string>
+
+    <string name="sunset">غروب الشمس</string>
+    <string name="_00_00">00:00</string>
+    <string name="sunrise">شروق الشمس</string>
+    <string name="wind">سرعة الرياح</string>
+    <string name="ooms">00:00 م/ث</string>
+    <string name="condition">السحب</string>
+    <string name="percentage"> ٪</string>
+    <string name="sea">البحر</string>
+    <string name="_0000_hpa">0000</string>
+    <string name="humidity">الرطوبة</string>
+    <string name="_00">00%</string>
+    <string name="maxT">الحد الأقصى</string>
+    <string name="miniT">الحد الأدنى</string>
+    <string name="time">00:00 ص</string>
+    <string name="settings">الإعدادات</string>
+    <string name="temperature_unit">وحدة درجة الحرارة</string>
+    <string name="celsius">سلسيوس</string>
+    <string name="fahrenheit">فهرنهايت</string>
+    <string name="kelvin">كلفن</string>
+    <string name="wind_unit">وحدة سرعة الرياح</string>
+    <string name="meter_second">متر/ثانية</string>
+    <string name="miles_hour">ميل/ساعة</string>
+    <string name="choose_language">اختر اللغة</string>
+    <string name="arabic">العربية</string>
+    <string name="english">الإنجليزية</string>
+
+    <string name="choose_location">اختر الموقع</string>
+    <string name="favorite_cities">المدن المفضلة</string>
+    <string name="Location_Unknown">الموقع غير معروف</string>
+    <string name="location_text">يرجى تمكين أذونات الموقع من الإعدادات للمتابعة</string>
+    <string name="check_location">تحقق من إذن الموقع الخاص بك</string>
+    <string name="data_fetch">تم جلب البيانات بالفعل</string>
+    <string name="Unknown">غير معروف</string>
+    <string name="Unable">غير قادر على جلب اسم المدينة. يرجى التحقق من الاتصال.</string>
+    <string name="Invalid">بيانات الموقع غير صالحة.</string>
+    <string name="Not_Internet">الإنترنت غير متاح</string>
+    <string name="image">صورة</string>
+    <string name="select_location">يرجى تحديد موقع على الخريطة.</string>
+    <string name="add_to_favorites_title">إضافة إلى المفضلة</string>
+    <string name="add_to_favorites_desc">احفظ طقسك المفضل.</string>
+    <string name="notifications_title">الإشعارات</string>
+    <string name="notifications_desc">عرض الإشعارات الأخيرة.\nتعيين إشعارات المنبه.\nحذف إشعارات المنبه باستخدام إيماءة السحب لليسار.</string>
+
+    <string name="settings_title">الإعدادات</string>
+    <string name="settings_desc">تحويل وحدات درجة الحرارة، وحدات سرعة الرياح، وتغيير اللغة.</string>
+
+    <string name="open_favorites_title">فتح الطقس المفضل</string>
+    <string name="open_favorites_desc">عرض الطقس المفضل المحفوظ لديك.</string>
+
+    <string name="hourly_forecast_title">التوقعات لكل ساعة</string>
+    <string name="hourly_forecast_desc">عرض التوقعات الجوية لكل ساعة.</string>
+
+    <string name="daily_forecast_title">التوقعات اليومية</string>
+    <string name="daily_forecast_desc">عرض التوقعات الجوية اليومية.</string>
+    <string name="swipe_guide_title">اسحب للحذف</string>
+    <string name="swipe_guide_desc">اسحب إلى اليسار على المدينة لحذفها من المفضلة.</string>
+
+    <string name="unknown">غير معروف</string>
+    <string name="no_offline_data_available">لا تتوفر بيانات offline.</string>
+    <string name="pascal">هيكتو باسكال</string>
+    <string name="alarm">منبه</string>
+    <string name="dismiss">إلغاء</string>
+    <string name="date_time">5:30 مساءً الثلاثاء، 17 سبتمبر</string>
+    <string name="alarm_center">مركز المنبه</string>
+    <string name="notification_permission">إذن الإشعارات</string>
+    <string name="open_notification">فتح الإشعار</string>
+    <string name="close_notification">إغلاق الإشعار</string>
+    <string name="alarm_permission">إذن المنبه</string>
+    <string name="close_alarm">إغلاق المنبه</string>
+    <string name="open_alarm">فتح المنبه</string>
+    <string name="granted">تم منح إذن الإشعارات</string>
+    <string name="denied">تم رفض إذن الإشعارات</string>
+    <string name="already">الإشعارات مفعلة بالفعل</string>
+    <string name="version">الإشعارات مفعلة بشكل افتراضي لهذه النسخة</string>
+    <string name="weather_saved">تم حفظ بيانات الطقس في المفضلة</string>
+    <string name="failed">فشل في حفظ بيانات الطقس</string>
+    <string name="failed_to_retriev">فشل في استرجاع بيانات الطقس</string>
+
+
+</resources>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="200dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@drawable/backgroundshapeweather"
+    android:padding="10dp"
+    android:elevation="10dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/image_weather"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="10dp"
+            android:src="@drawable/sunny_cloud_icon"
+            app:layout_constraintBottom_toBottomOf="@+id/alarm_message"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/alarm_message" />
+
+        <TextView
+            android:id="@+id/alarm_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="@string/alarm"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_marginStart="20dp"
+            app:layout_constraintStart_toEndOf="@id/image_weather"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
+        <TextView
+            android:id="@+id/des"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:hint="@string/alarm"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/alarm_message"
+            app:layout_constraintTop_toBottomOf="@id/alarm_message" />
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/frameButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/des"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:background="@drawable/background_shape"
+            android:layout_marginTop="20dp"
+            >
+            <Button
+                android:id="@+id/dismiss_button"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/dismiss"
+                android:textColor="@color/black"
+                android:background="@drawable/background_shape"
+                android:textSize="16sp"
+                android:fontFamily="@font/merriweathersans_semibold"
+                />
+
+        </FrameLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>
